@@ -1,7 +1,6 @@
 import os
 
-script_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
+script_dir = "C:/Studies/7 sem/kursach/compiler-st" #os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 class SymbolTableManager(object):
     ''' Управляет таблицей символов компилятора,
     которая используется в различных модулях '''
@@ -153,7 +152,7 @@ class Scanner(object):
         assert chunk_size >= 16, "Минимальный поддерживаемый размер чанка - 16!"
         if not os.path.isabs(input_file):
             input_file = os.path.join(script_dir, input_file)
-        self.input_file = input_file
+        self.input_file = 'compiler-st/tests/TS15/input.txt' #input_file
         self.line_number = 1
         self.first_line = 1
         self._lexical_errors = []
@@ -177,7 +176,10 @@ class Scanner(object):
         self.letters = {chr(i) for i in range(65, 91)} | {chr(i) for i in range(97, 123)}
         self.digits = {str(i) for i in range(0, 10)}
         self.symbols = self._symbols | {"*", "="}
-        keywords = [
+        #
+        # Добавить свои ключевые слова
+        #
+        keywords = [  
             "if",           # 0
             "else",         # 1
             "void",         # 2
