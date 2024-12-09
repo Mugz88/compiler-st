@@ -155,7 +155,7 @@ class Scanner(object):
         assert chunk_size >= 16, "Минимальный поддерживаемый размер чанка - 16!"
         if not os.path.isabs(input_file):
             input_file = os.path.join(script_dir, input_file)
-        self.input_file = 'compiler-st/tests/TS15/input.txt' #input_file
+        self.input_file = 'tests/TS15/input.txt' #input_file
         self.line_number = 1
         self.first_line = 1
         self._lexical_errors = []
