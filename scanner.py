@@ -1,6 +1,9 @@
 import os
 
-script_dir = "C:/Studies/7 sem/kursach/compiler-st" #os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+script_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+script_dir = os.path.join(script_dir, "compiler-st")
+
+print(script_dir)
 class SymbolTableManager(object):
     ''' Управляет таблицей символов компилятора,
     которая используется в различных модулях '''
