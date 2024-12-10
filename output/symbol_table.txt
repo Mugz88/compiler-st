@@ -16,3 +16,11 @@
 16.	@
 17.	#
 18.	&
+19.	int
+20.	main
+21.	decimal
+22.	binary
+23.	octal
+24.	hexadecimal
+25.	H
+26.	return

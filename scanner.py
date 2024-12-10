@@ -85,7 +85,8 @@ char_to_col = {
     "B": 9,
     "O": 10,
     "D": 11,
-    "H": 12
+    "H": 12,
+    ".": 14  # Новый столбец для точки
 }
 
 state_to_token = {
@@ -107,6 +108,7 @@ state_to_token = {
     28: "NUM_BIN_SUFFIX",  # Новый токен для двоичных чисел с суффиксом
     29: "NUM_OCT_SUFFIX",  # Новый токен для восьмеричных чисел с суффиксом
     30: "NUM_HEX_SUFFIX",  # Новый токен для шестнадцатеричных чисел с суффиксом
+    31: "NUM_DEC_FLOAT"  # Новый токен для десятичных чисел с дробной частью
 }
 
 state_to_error_message = {
@@ -147,10 +149,11 @@ token_dfa = (
     (28, 28, None, None, None, None, None, None, None, None, None, None, None, None),  # Новое состояние для суффиксов
     (29, 29, None, None, None, None, None, None, None, None, None, None, None, None),  # Новое состояние для суффиксов
     (30, 30, None, None, None, None, None, None, None, None, None, None, None, None),  # Новое состояние для суффиксов
+    (31, 31, None, None, None, None, None, None, None, None, None, None, None, None),  # Новое состояние для десятичных чисел с дробной частью
 )
 
-F = {1, 3, 6, 10, 11, 12, 16, 18, 19, 20, 21, 23, 24, 25, 26, 27, 28, 29, 30}
-Fstar = {3, 6, 11, 21, 23, 24, 25, 26, 27, 28, 29, 30}
+F = {1, 3, 6, 10, 11, 12, 16, 18, 19, 20, 21, 23, 24, 25, 26, 27, 28, 29, 30, 31}
+Fstar = {3, 6, 11, 21, 23, 24, 25, 26, 27, 28, 29, 30, 31}
 unclosed_comment_states = {14, 15, 17}
 
 whitespaces = {' ', '\r', '\t', '\v', '\f'}
@@ -281,6 +284,8 @@ class Scanner(object):
             return char_to_col["HEX_LETTER"]
         if input_char in self._symbols:
             return char_to_col["SYMBOL"]
+        if input_char == '.':
+            return char_to_col["."]
 
         try:
             return char_to_col[input_char.upper()]
@@ -339,7 +344,7 @@ class Scanner(object):
                         self._lexical_errors.append((self.line_number, err_token, "unclosed comment"))
                     self.line_number += self.input.count("\n")
                     self.input = ""
-                    return ("EOF", "\$")
+                    return ("EOF", "$")
 
             token_candidates = []
             error_occurred = False
@@ -447,6 +452,9 @@ class Scanner(object):
                     elif len(self.input) > 0 and self.input[0] in {'H', 'h'}:
                         self.input = self.input[1:]
                         token = "NUM_HEX"
+                    elif len(self.input) > 0 and self.input[0] == '.':
+                        self.input = self.input[1:]
+                        token = "NUM_DEC_FLOAT"
 
                 if token == "NUM_BIN":
                     if len(self.input) > 0 and self.input[0] in {'B', 'b'}:
@@ -462,7 +470,13 @@ class Scanner(object):
                     if len(self.input) > 0 and self.input[0] in {'H', 'h'}:
                         self.input = self.input[1:]
                         token = "NUM_HEX_SUFFIX"
-                        
+
+                if token == "NUM_DEC_FLOAT":
+                    if len(self.input) > 0 and self.input[0] in self.digits:
+                        while len(self.input) > 0 and self.input[0] in self.digits:
+                            lexim += self.input[0]
+                            self.input = self.input[1:]
+
                 return (token, lexim)
             else:
                 print(f"[Panic Mode] Dropping '{self.input[:1]}' from input!")

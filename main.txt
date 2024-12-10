@@ -1,2 +1,7 @@
-21312312b
-
+int main() {
+    int decimal = 123.665;
+    int binary = 01B;
+    int octal = 27o;
+    int hexadecimal = 23FH;
+    return 0;
+}
