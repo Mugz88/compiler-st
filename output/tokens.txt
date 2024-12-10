@@ -1,1 +1,7 @@
-1.	(ID, BEQ)
+1.	(ID, int) (ID, main) (RAZD, () (RAZD, )) (SYMBOL, {)
+2.	(ID, int) (ID, decimal) (SYMBOL, =) (NUM_DEC, 123) (RAZD, ;)
+3.	(ID, int) (ID, binary) (SYMBOL, =) (RAZD, ;)
+4.	(ID, int) (ID, octal) (SYMBOL, =) (RAZD, ;)
+5.	(ID, int) (ID, hexadecimal) (SYMBOL, =) (ID, H) (RAZD, ;)
+6.	(ID, return) (NUM_DEC, 0) (RAZD, ;)
+7.	(SYMBOL, })

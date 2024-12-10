@@ -1,1 +1,3 @@
-There is no lexical errors.
+#3 : Lexical Error! '01B' rejected, reason: illegal number.
+#4 : Lexical Error! '27o' rejected, reason: illegal number.
+#5 : Lexical Error! '23F' rejected, reason: illegal number.
