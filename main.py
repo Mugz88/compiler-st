@@ -1,5 +1,6 @@
 import sys
 import os
+from time import sleep
 from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QTextEdit, QLabel, QTableWidget, QTableWidgetItem, QPushButton, QMenu
 from PyQt6.QtGui import QAction
 from compiler import compile
@@ -145,6 +146,14 @@ class MainWindow(QMainWindow):
         # Запуск функции compile с путем к файлу main.txt
         SymbolTableManager.init()
         mainScanner(source_file)
+        sleep(1)
+        tokens_file = os.path.join(os.path.dirname(__file__), 'output', 'tokens.txt')
+        if os.path.exists(tokens_file):
+            with open(tokens_file, 'r') as file:
+                tokens_content = file.read()
+            self.result_output.setPlainText(tokens_content)
+        else:
+            self.result_output.setPlainText("Файл tokens.txt не найден.")
         
         
     
