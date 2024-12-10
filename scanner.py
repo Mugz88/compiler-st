@@ -339,7 +339,7 @@ class Scanner(object):
                         self._lexical_errors.append((self.line_number, err_token, "unclosed comment"))
                     self.line_number += self.input.count("\n")
                     self.input = ""
-                    return ("EOF", "$")
+                    return ("EOF", "\$")
 
             token_candidates = []
             error_occurred = False
@@ -462,7 +462,7 @@ class Scanner(object):
                     if len(self.input) > 0 and self.input[0] in {'H', 'h'}:
                         self.input = self.input[1:]
                         token = "NUM_HEX_SUFFIX"
-
+                        
                 return (token, lexim)
             else:
                 print(f"[Panic Mode] Dropping '{self.input[:1]}' from input!")

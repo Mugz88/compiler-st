@@ -1,1 +1,1 @@
-#1 : Lexical Error! '2B' rejected, reason: illegal number.
+#1 : Lexical Error! '21312312b' rejected, reason: illegal number.
