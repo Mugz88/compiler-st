@@ -9,13 +9,5 @@
 9.	default
 10.	case
 11.	return
-12.	KEYWORD
-13.	ID
-14.	min
-15.	SYMBOL
-16.	arr
-17.	g
-18.	NUM
-19.	b
-20.	x
-21.	u
+12.	main
+13.	output

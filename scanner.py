@@ -155,7 +155,8 @@ class Scanner(object):
         assert chunk_size >= 16, "Минимальный поддерживаемый размер чанка - 16!"
         if not os.path.isabs(input_file):
             input_file = os.path.join(script_dir, input_file)
-        self.input_file = os.path.join(script_dir, "tests", "TS15", "tokens.txt") #input_file
+        self.input_file = input_file
+        print(self.input_file)
         self.line_number = 1
         self.first_line = 1
         self._lexical_errors = []
@@ -387,7 +388,7 @@ class Scanner(object):
                 print(f"[Panic Mode] Dropping '{self.input[:1]}' from line {self.line_number}")
                 self.input = self.input[1:]
 
-def main(input_path):
+def mainScanner(input_path):
     ''' Основная функция для запуска сканера '''
     import time
     scanner = Scanner(input_path)
@@ -404,4 +405,4 @@ def main(input_path):
 if __name__ == "__main__":
     SymbolTableManager.init()
     input_path = os.path.join(script_dir, "input/input_simple.c")
-    main(input_path)
+    mainScanner(input_path)

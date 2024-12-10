@@ -1,13 +1,1 @@
-#1 : Lexical Error! '1.' rejected, reason: illegal number.
-#2 : Lexical Error! '2.' rejected, reason: illegal number.
-#3 : Lexical Error! '3.' rejected, reason: illegal number.
-#4 : Lexical Error! '4.' rejected, reason: illegal number.
-#5 : Lexical Error! '5.' rejected, reason: illegal number.
-#6 : Lexical Error! '6.' rejected, reason: illegal number.
-#7 : Lexical Error! '7.' rejected, reason: illegal number.
-#8 : Lexical Error! '8.' rejected, reason: illegal number.
-#9 : Lexical Error! '9.' rejected, reason: illegal number.
-#10 : Lexical Error! '10.' rejected, reason: illegal number.
-#11 : Lexical Error! '11.' rejected, reason: illegal number.
-#12 : Lexical Error! '12.' rejected, reason: illegal number.
-#13 : Lexical Error! '13.' rejected, reason: illegal number.
+There is no lexical errors.

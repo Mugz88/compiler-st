@@ -2,6 +2,8 @@ import sys
 import os
 from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QTextEdit, QLabel, QTableWidget, QTableWidgetItem, QPushButton, QMenu
 from PyQt6.QtGui import QAction
+from compiler import compile
+from scanner import SymbolTableManager, mainScanner
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -20,6 +22,15 @@ class MainWindow(QMainWindow):
         self.test_button.clicked.connect(self.show_tests)
         main_layout.addWidget(self.test_button)
 
+        # Кнопка для запуска анализа
+        self.run_button = QPushButton("Запуск")
+        self.run_button.clicked.connect(self.run_analysis)
+        main_layout.addWidget(self.run_button)
+
+        self.run_button = QPushButton("Сканер")
+        self.run_button.clicked.connect(self.run_scanner)
+        main_layout.addWidget(self.run_button)
+        
         # Верхняя часть с таблицами и полем для ввода кода
         top_layout = QHBoxLayout()
         main_layout.addLayout(top_layout)
@@ -40,6 +51,7 @@ class MainWindow(QMainWindow):
         # Центральная часть с полем для ввода кода
         self.code_input = QTextEdit()
         self.code_input.setPlaceholderText("Введите исходный текст...")
+        self.code_input.setLineWrapMode(QTextEdit.LineWrapMode.NoWrap)  # Отключение переноса строк
         top_layout.addWidget(self.code_input)
 
         # Правая часть с полем для отображения результата анализа
@@ -112,6 +124,30 @@ class MainWindow(QMainWindow):
 
         self.bottom_result_output.setPlainText(result_text)
 
+    def run_analysis(self):
+        # Создание файла main.txt и сохранение текста из поля для ввода кода
+        code = self.code_input.toPlainText()
+        source_file = os.path.join(os.path.dirname(__file__), 'main.txt')
+        with open(source_file, 'w') as file:
+            file.write(code)
+
+        # Запуск функции compile с путем к файлу main.txt
+        result = compile(source_file)
+        self.result_output.setPlainText(result)
+        
+    def run_scanner(self):
+        # Создание файла main.txt и сохранение текста из поля для ввода кода
+        code = self.code_input.toPlainText()
+        source_file = os.path.join(os.path.dirname(__file__), 'main.txt')
+        with open(source_file, 'w') as file:
+            file.write(code)
+
+        # Запуск функции compile с путем к файлу main.txt
+        SymbolTableManager.init()
+        mainScanner(source_file)
+        
+        
+    
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = MainWindow()
