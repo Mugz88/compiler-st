@@ -99,9 +99,15 @@ state_to_token = {
     11: "SYMBOL",
     12: "SYMBOL",
     16: "COMMENT",
-    18: "COMMENT",
+
+    18: "RAZD",
+
     19: "WHITESPACE",
-    21: "SYMBOL",
+    21: "SYMBOL", 
+
+    23: "SYMBOL",
+    24: "SYMBOL",
+
 }
 
 state_to_error_message = {
@@ -133,14 +139,16 @@ token_dfa = (
     (14, 14, 14, 15, 14, 14, 16, 14, 14), # State 15
     (None, None, None, None, None, None, None, None, None), # State 16 (/* comment */)
     (17, 17, 17, 17, 17, 17, 17, 18, 17), # State 17
-    (None, None, None, None, None, None, None, None, None), # State 18 (// comment\n)
+    (None, None, None, None, None, None, None, None, None), # State 18 RAZD
     (19, None, None, None, None, None, None, 19, None), # State 19 (newline + whitespace)
     (None, None, None, None, None, None, None, None, None), # State 20 (invalid input)
     (None, None, None, None, None, None, None, None, None), # State 21 (symbol *)
     (None, None, None, None, None, None, None, None, None), # State 22 (invalid comment)
+    (22, 22, 22, 23, 22, 22, 17, 22, 22), # State 23 &
+    (23, 23, 23, 15, 23, 23, 23, 23, 23), # State 24 &&
 )
 
-F = {1, 3, 6, 10, 11, 12, 16, 18, 19, 20, 21} # все принимающие состояния
+F = {1, 3, 6, 10, 11, 12, 16, 18, 19, 20, 21, 23} # все принимающие состояния
 Fstar = {3, 6, 11, 21}                        # принимающие состояния, которые требуют возврата последнего символа во входной поток
 unclosed_comment_states = {14, 15, 17}
 
@@ -176,25 +184,61 @@ class Scanner(object):
         self.read_input()
 
         # лексическая спецификация
-        self._symbols = {',', ';', ':', '[', ']', '(', ')', '{', '}', '+', '-', '<'} # = и * исключены
+        self._symbols = {',', ';', ':', '(', ')', '{', '}', '+', '-','&&','^','#','@','&','.'} # = и * исключены
         self.letters = {chr(i) for i in range(65, 91)} | {chr(i) for i in range(97, 123)}
         self.digits = {str(i) for i in range(0, 10)}
         self.symbols = self._symbols | {"*", "="}
         #
-        # Добавить свои ключевые слова
+        
+
+        razd = [
+            "NEQ",       # 0
+            "EQV",       # 1
+            "LOWT",      # 2
+            "LOWE",      # 3
+            "GRT",       # 4
+            "GRE",       # 5
+            "add",       # 6
+            "disa",      # 7
+            "||",        # 8
+            "umn",       # 9
+            "del",       # 10
+            "&&",        # 11
+            "^",         # 12
+            "+",         # 13
+            "-",         # 14
+            "as",        # 15
+            ":",         # 16
+            "(",         # 17
+            ")",         # 18
+            ".",         # 19
+            ",",         # 20
+            ";",         # 21
+            "#",         # 22
+        ]
+        self.identifiers = razd
+        self.razd = set(razd)
+
         #
-        keywords = [  
-            "if",           # 0
-            "else",         # 1
-            "void",         # 2
-            "int",          # 3
-            "while",        # 4
-            "break",        # 5
-            "continue",     # 6
-            "switch",       # 7
-            "default",      # 8
-            "case",         # 9
-            "return"        # 10
+        keywords = [
+            "begin",     # 0
+            "end",       # 1
+            "var",       # 2
+            "if",        # 3
+            "then",      # 4
+            "else",      # 5
+            "for",       # 6
+            "to",        # 7
+            "false",     # 8
+            "do",        # 9
+            "next",      # 10
+            "read",      # 11
+            "write",     # 12
+            "while",     # 13
+            "true",      # 14
+            "@",      # 15
+            "#",      # 16
+            "&",      # 17
         ]
         self.identifiers = keywords
         self.keywords = set(keywords)
@@ -247,6 +291,8 @@ class Scanner(object):
             return char_to_col["DIGIT"]
         if input_char in self._symbols:
             return char_to_col["SYMBOL"]
+        
+
         try:
             return char_to_col[input_char]
         except KeyError:
@@ -284,11 +330,10 @@ class Scanner(object):
         return symbol_id
 
     def get_next_token(self):
-        ''' Возвращает следующий токен из входного потока '''
         save_state = None
         error_occurred = False
         input_ended = False
-        s = 0 # начальное состояние
+        s = 0  # начальное состояние
 
         if len(self.tokens.keys()) > self.max_state_size:
             self.tokens.pop(self.first_line, None)
@@ -297,7 +342,7 @@ class Scanner(object):
         if len(self._lexical_errors) > self.max_state_size:
             self._lexical_errors.pop(0)
 
-        while True: # Цикл до тех пор, пока не найдем корректный токен
+        while True:  # Цикл до тех пор, пока не найдем корректный токен
             if not self.input or input_ended:
                 try:
                     self.read_input()
@@ -329,28 +374,28 @@ class Scanner(object):
                 col = self._resolve_dfa_table_column(a)
                 next_s = token_dfa[s][col]
 
-                if s in state_to_error_message: # находимся ли мы в состоянии ошибки?
+                if s in state_to_error_message:  # находимся ли мы в состоянии ошибки?
                     if s == 22:
-                        i -= 1 # это состояние ошибки просмотра вперед (некорректный комментарий)
+                        i -= 1  # это состояние ошибки просмотра вперед (некорректный комментарий)
                     lexim, error = self.input[:i], state_to_error_message[s]
                     if self.max_state_size > 0:
                         SymbolTableManager.error_flag = True
                         self._lexical_errors.append((self.line_number, lexim, error))
                     else:
                         print(f"Lexical Error in line {self.line_number}: {error} '{lexim}'")
-                    self.input = self.input[i:] # пропускаем некорректный токен (режим паники)
+                    self.input = self.input[i:]  # пропускаем некорректный токен (режим паники)
                     error_occurred = True
                     break
 
-                if s in F: # находимся ли мы в принимающем состоянии?
+                if s in F:  # находимся ли мы в принимающем состоянии?
                     if s in Fstar:
                         token_candidates.append((s, self.input[:i-1]))
                     else:
                         token_candidates.append((s, self.input[:i]))
 
-                if next_s is None: # можем ли мы продолжать проход по DFA?
+                if next_s is None:  # можем ли мы продолжать проход по DFA?
                     break
-                elif i >= len(self.input): # достаточно ли у нас ввода для этого?
+                elif i >= len(self.input):  # достаточно ли у нас ввода для этого?
                     # это происходит только для больших файлов или маленького размера чанка
                     if next_s not in F:
                         save_state = next_s
@@ -363,20 +408,37 @@ class Scanner(object):
                 continue
 
             if token_candidates:
-                max_token = token_candidates[-1] # выбираем максимальный токен
+                max_token = token_candidates[-1]  # выбираем максимальный токен
                 state, lexim = max_token
-                self.input = self.input[len(lexim):] # продвигаемся во вводе
+                self.input = self.input[len(lexim):]  # продвигаемся во вводе
                 token = state_to_token[state]
 
-                if token == "WHITESPACE" or token == "COMMENT": # эти токены не будут возвращены
-                    self._switch_line(lexim.count("\n")) # обновляем номер строки и т.д.
-                    continue # переходим к следующему токену
+                if token == "WHITESPACE" or token == "COMMENT":  # эти токены не будут возвращены
+                    self._switch_line(lexim.count("\n"))  # обновляем номер строки и т.д.
+                    continue  # переходим к следующему токену
+                
+                if lexim == "&":  # если символ — это одиночный &
+                     if len(self.input) > 0 and self.input[0] == "&":  # проверяем следующий символ
+                         self.input = self.input[1:]  # убираем второй & из потока
+                         token = "RAZD"  # это разделитель &&
+                         lexim = "&&"
+                     else:
+                        token = "KEYWORD"  # если это одиночный символ, то ключевое слово
 
-                if token == "ID_OR_KEYWORD": # различаем идентификаторы и ключевые слова
+                if token == "SYMBOL":
+                    token = "KEYWORD" if lexim in self.keywords else "SYMBOL"  
+
+                if token == "SYMBOL":
+                    token = "RAZD" if lexim in self.razd else "SYMBOL"      
+                   
+                if token == "ID_OR_KEYWORD":  
                     token = "KEYWORD" if lexim in self.keywords else "ID"
 
+                if token == "ID":  
+                    token = "RAZD" if lexim in self.razd else "ID"
+
                 if self.max_state_size > 0:
-                    self.tokens[self.line_number].append((token, lexim)) # сохраняем токены для последующей печати
+                    self.tokens[self.line_number].append((token, lexim))  # сохраняем токены для последующей печати
 
                 if token == "ID":
                     if lexim not in self.identifiers:
@@ -385,8 +447,9 @@ class Scanner(object):
 
                 return (token, lexim)
             else:
-                print(f"[Panic Mode] Dropping '{self.input[:1]}' from line {self.line_number}")
-                self.input = self.input[1:]
+                print(f"[Panic Mode] Dropping '{self.input[:1]}' from input!")
+                self.input = self.input[1:]  # сбрасываем некорректный символ в случае ошибки
+
 
 def mainScanner(input_path):
     ''' Основная функция для запуска сканера '''

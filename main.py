@@ -154,6 +154,14 @@ class MainWindow(QMainWindow):
             self.result_output.setPlainText(tokens_content)
         else:
             self.result_output.setPlainText("Файл tokens.txt не найден.")
+            
+        lex_erorrs_file = os.path.join(os.path.dirname(__file__), 'errors', 'lexical_errors.txt')
+        if os.path.exists(lex_erorrs_file):
+            with open(lex_erorrs_file, 'r') as file:
+                erorrs_content = file.read()
+            self.bottom_result_output.setPlainText(erorrs_content)
+        else:
+            self.bottom_result_output.setPlainText("Файл tokens.txt не найден.")    
         
         
     
