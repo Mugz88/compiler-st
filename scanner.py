@@ -103,7 +103,10 @@ state_to_token = {
     24: "NUM_OCT",
     25: "NUM_DEC",
     26: "NUM_HEX",
-    27: "NUM_SUFFIX"
+    27: "NUM_SUFFIX",
+    28: "NUM_BIN_SUFFIX",  # Новый токен для двоичных чисел с суффиксом
+    29: "NUM_OCT_SUFFIX",  # Новый токен для восьмеричных чисел с суффиксом
+    30: "NUM_HEX_SUFFIX",  # Новый токен для шестнадцатеричных чисел с суффиксом
 }
 
 state_to_error_message = {
@@ -141,11 +144,14 @@ token_dfa = (
     (24, 24, None, None, None, None, None, None, None, None, None, None, None, None),
     (25, 25, None, None, None, None, None, None, None, None, None, None, None, None),
     (26, 26, 26, None, None, None, None, None, None, None, None, None, None, 26),
-    (None, None, None, None, None, None, None, None, None, None, None, None, None, None),
+    (28, 28, None, None, None, None, None, None, None, None, None, None, None, None),  # Новое состояние для суффиксов
+    (29, 29, None, None, None, None, None, None, None, None, None, None, None, None),  # Новое состояние для суффиксов
+    (30, 30, None, None, None, None, None, None, None, None, None, None, None, None),  # Новое состояние для суффиксов
 )
 
-F = {1, 3, 6, 10, 11, 12, 16, 18, 19, 20, 21, 23, 24, 25, 26, 27}
-Fstar = {3, 6, 11, 21, 23, 24, 25, 26, 27}
+F = {1, 3, 6, 10, 11, 12, 16, 18, 19, 20, 21, 23, 24, 25, 26, 27, 28, 29, 30}
+Fstar = {3, 6, 11, 21, 23, 24, 25, 26, 27, 28, 29, 30}
+unclosed_comment_states = {14, 15, 17}
 
 whitespaces = {' ', '\r', '\t', '\v', '\f'}
 
@@ -429,6 +435,33 @@ class Scanner(object):
                     if lexim not in self.identifiers:
                         self.identifiers.append(lexim)
                     lexim = self.update_symbol_table(lexim)
+
+                # Добавление логики для обработки чисел с суффиксами
+                if token == "NUM_DEC":
+                    if len(self.input) > 0 and self.input[0] in {'B', 'b'}:
+                        self.input = self.input[1:]
+                        token = "NUM_BIN"
+                    elif len(self.input) > 0 and self.input[0] in {'O', 'o'}:
+                        self.input = self.input[1:]
+                        token = "NUM_OCT"
+                    elif len(self.input) > 0 and self.input[0] in {'H', 'h'}:
+                        self.input = self.input[1:]
+                        token = "NUM_HEX"
+
+                if token == "NUM_BIN":
+                    if len(self.input) > 0 and self.input[0] in {'B', 'b'}:
+                        self.input = self.input[1:]
+                        token = "NUM_BIN_SUFFIX"
+
+                if token == "NUM_OCT":
+                    if len(self.input) > 0 and self.input[0] in {'O', 'o'}:
+                        self.input = self.input[1:]
+                        token = "NUM_OCT_SUFFIX"
+
+                if token == "NUM_HEX":
+                    if len(self.input) > 0 and self.input[0] in {'H', 'h'}:
+                        self.input = self.input[1:]
+                        token = "NUM_HEX_SUFFIX"
 
                 return (token, lexim)
             else:
