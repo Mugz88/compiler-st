@@ -31,7 +31,7 @@ class MainWindow(QMainWindow):
         self.run_button = QPushButton("Сканер")
         self.run_button.clicked.connect(self.run_scanner)
         main_layout.addWidget(self.run_button)
-        
+
         # Верхняя часть с таблицами и полем для ввода кода
         top_layout = QHBoxLayout()
         main_layout.addLayout(top_layout)
@@ -43,8 +43,8 @@ class MainWindow(QMainWindow):
         tables = ["Служебные слова", "Разделители", "Числа", "Идентификаторы"]
         self.tables = []
         for table_name in tables:
-            table = QTableWidget(5, 2)
-            table.setHorizontalHeaderLabels(["Ключ", "Значение"])
+            table = QTableWidget(25, 1)  # Увеличиваем количество строк
+            table.setHorizontalHeaderLabels(["Значение"])
             left_layout.addWidget(QLabel(table_name))
             left_layout.addWidget(table)
             self.tables.append(table)
@@ -76,16 +76,15 @@ class MainWindow(QMainWindow):
     def fill_tables(self):
         # Пример данных для таблиц
         data = [
-            [("if", "условие"), ("else", "иначе"), ("while", "пока"), ("for", "для"), ("return", "вернуть")],
-            [(";", "точка с запятой"), (",", "запятая"), ("(", "открывающая скобка"), (")", "закрывающая скобка"), ("{", "открывающая фигурная скобка")],
-            [("1", "один"), ("2", "два"), ("3", "три"), ("4", "четыре"), ("5", "пять")],
-            [("x", "переменная"), ("y", "переменная"), ("z", "переменная"), ("a", "переменная"), ("b", "переменная")]
+            ["end", "dim", "integer", "real", "boolean", "if", "then", "else", "for", "to", "do", "while", "read", "write", "true", "false"],
+            ["NE", "EQ", "LT", "LE", "GT", "GE", "plus", "min", "or", "mult", "div", "and", "~", "+", "-", "as", ":", "{", "}", "(", ")", ".", ","],
+            ["1", "2", "3", "4", "5"],
+            ["x", "y", "z", "a", "b"]
         ]
 
         for i, table in enumerate(self.tables):
-            for j, (key, value) in enumerate(data[i]):
-                table.setItem(j, 0, QTableWidgetItem(key))
-                table.setItem(j, 1, QTableWidgetItem(value))
+            for j, value in enumerate(data[i]):
+                table.setItem(j, 0, QTableWidgetItem(value))
 
     def show_tests(self):
         # Создание всплывающего меню с названиями тестов
@@ -135,7 +134,7 @@ class MainWindow(QMainWindow):
         # Запуск функции compile с путем к файлу main.txt
         result = compile(source_file)
         self.result_output.setPlainText(result)
-        
+
     def run_scanner(self):
         # Создание файла main.txt и сохранение текста из поля для ввода кода
         code = self.code_input.toPlainText()
@@ -154,17 +153,15 @@ class MainWindow(QMainWindow):
             self.result_output.setPlainText(tokens_content)
         else:
             self.result_output.setPlainText("Файл tokens.txt не найден.")
-            
+
         lex_erorrs_file = os.path.join(os.path.dirname(__file__), 'errors', 'lexical_errors.txt')
         if os.path.exists(lex_erorrs_file):
             with open(lex_erorrs_file, 'r') as file:
                 erorrs_content = file.read()
             self.bottom_result_output.setPlainText(erorrs_content)
         else:
-            self.bottom_result_output.setPlainText("Файл tokens.txt не найден.")    
-        
-        
-    
+            self.bottom_result_output.setPlainText("Файл lexical_errors.txt не найден.")
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = MainWindow()
