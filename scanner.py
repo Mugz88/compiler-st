@@ -197,7 +197,7 @@ class Scanner(object):
         self.read_input()
 
         # лексическая спецификация
-        self._symbols = {',', ';', ':', '(', ')', '{', '}', '-','.','~','/'} # = и * исключены
+        self._symbols = {',', ';', ':', '(', ')', '{', '}','.','~','/'} # = и * исключены
         self.letters = {chr(i) for i in range(65, 91)} | {chr(i) for i in range(97, 123)}
         self.digits = {str(i) for i in range(0, 10)}
         self.symbols = self._symbols | {"*", "="}
@@ -428,9 +428,6 @@ class Scanner(object):
                 if token == "WHITESPACE" or token == "COMMENT":  # эти токены не будут возвращены
                     self._switch_line(lexim.count("\n"))  # обновляем номер строки и т.д.
                     continue  # переходим к следующему токену
-                
-
-                
 
                 if token == "SYMBOL":
                     token = "KEYWORD" if lexim in self.keywords else "SYMBOL"  
