@@ -197,7 +197,7 @@ class Scanner(object):
         self.read_input()
 
         # лексическая спецификация
-        self._symbols = {',', ';', ':', '(', ')', '{', '}', '-','^','#','@','&','.','|'} # = и * исключены
+        self._symbols = {',', ';', ':', '(', ')', '{', '}','^','#','@','&','.','|'} # = и * исключены
         self.letters = {chr(i) for i in range(65, 91)} | {chr(i) for i in range(97, 123)}
         self.digits = {str(i) for i in range(0, 10)}
         self.symbols = self._symbols | {"*", "="}
