@@ -86,9 +86,14 @@ char_to_col = {        # сокращения в DFA
     "*": 3,          # *
     "=": 4,          # =
     "SYMBOL": 5,     # s
-    "/": 6,          # /
+    "#": 6,          # /
     "\n": 7,         # \n
-    "OTHER": 8       # o (Любой другой символ, допустимый только внутри блока комментариев)
+    "OTHER": 8 ,     # o (Любой другой символ, допустимый только внутри блока комментариев) 
+    "E": 9,
+    "e": 10,
+    "+": 11,
+    "-": 12,
+
 }
 
 state_to_token = {
@@ -100,57 +105,65 @@ state_to_token = {
     12: "SYMBOL",
     16: "COMMENT",
 
-    18: "RAZD",
+ 
 
     19: "WHITESPACE",
-    21: "SYMBOL", 
+    21: "SYMBOL",
 
-    23: "SYMBOL",
-    24: "SYMBOL",
+    23: "RAZD" ,
+    24: "NUM exp" ,
+
+
+   
+    
 
 }
 
 state_to_error_message = {
     4: "illegal number",
-    8: "unmatched */",
+    8: "unmatched #",
     20: "invalid input",
-    22: "invalid input"
+    22: "invalid input", 
+    50: "",
+   
 }
 
 token_dfa = (
     # Input character types
-    #   w     d     l     *     =     s     /    \n     o
-    #   0     1     2     3     4     5     6     7     8
-    (1, 2, 5, 7, 9, 12, 13, 19, 20), # State 0 (initial state)
-    (1, None, None, None, None, None, None, 1, None), # State 1 (whitespace)
-    (3, 2, 4, 3, 3, 3, 3, 3, 4), # State 2
-    (None, None, None, None, None, None, None, None, None), # State 3 (number)
-    (None, None, None, None, None, None, None, None, None), # State 4 (illegal number)
-    (6, 5, 5, 6, 6, 6, 6, 6, 20), # State 5
-    (None, None, None, None, None, None, None, None, None), # State 6 (id or keyword)
-    (21, 21, 21, 21, 21, 21, 8, 21, 20), # State 7
-    (None, None, None, None, None, None, None, None, None), # State 8 (unmatched */)
-    (11, 11, 11, 11, 10, 11, 11, 11, 20), # State 9
-    (None, None, None, None, None, None, None, None, None), # State 10 (symbol ==)
-    (None, None, None, None, None, None, None, None, None), # State 11 (symbol =)
-    (None, None, None, None, None, None, None, None, None), # State 12 (symbol)
-    (22, 22, 22, 14, 22, 22, 17, 22, 22), # State 13
-    (14, 14, 14, 15, 14, 14, 14, 14, 14), # State 14
-    (14, 14, 14, 15, 14, 14, 16, 14, 14), # State 15
-    (None, None, None, None, None, None, None, None, None), # State 16 (/* comment */)
-    (17, 17, 17, 17, 17, 17, 17, 18, 17), # State 17
-    (None, None, None, None, None, None, None, None, None), # State 18 RAZD
-    (19, None, None, None, None, None, None, 19, None), # State 19 (newline + whitespace)
-    (None, None, None, None, None, None, None, None, None), # State 20 (invalid input)
-    (None, None, None, None, None, None, None, None, None), # State 21 (symbol *)
-    (None, None, None, None, None, None, None, None, None), # State 22 (invalid comment)
-    (22, 22, 22, 23, 22, 22, 17, 22, 22), # State 23 &
-    (23, 23, 23, 15, 23, 23, 23, 23, 23), # State 24 &&
+    #   w     d     l     *     =     s     #    \n     o    E      e       +        - 
+    #   0     1     2     3     4     5     6     7     8    9      10      11      12
+    (   1,    2,    5,    7,    9,   12,   13,   19,   20,   5,     5,      23 ,     23), # State 0 (initial state)
+    (   1, None, None, None, None, None, None,    1, None, None, None,  None,  None), # State 1 (whitespace)
+    (   3,    2,    24,    3,    3,    3,    3,    3, 4,   24, 24, 4,  4), # State 2 
+    (None, None, None, None, None, None, None, None, None, None, None, None, None), # State 3 (number)
+    (None, None, None, None, None, None, None, None, None, None, None, None, None), # State 4 (illegal number)
+    (   6,    5,    5,    6,    6,    6,    6,    6,   20,   5,  5, 6, 6), # State 5 
+    (None, None, None, None, None, None, None, None, None, None, None, None, None), # State 6 (id or keyword)
+    (  21,   21,   21,   21,   21,   21,    8,   21,   20), # State 7 хз что это
+    (None, None, None, None, None, None, None, None, None, None, None, None, None), # State 8 (unmatched */)
+    (  11,   11,   11,   11,   10,   11,   11,   11,   20), # State 9 хз 
+    (None, None, None, None, None, None, None, None, None, None, None, None, None), # State 10 (symbol ==)
+    (None, None, None, None, None, None, None, None, None, None, None, None, None), # State 11 (symbol =)
+    (None, None, None, None, None, None, None, None, None, None, None, None, None), # State 12 (symbol)
+    (  22,   22,   22,   14,   22,   22,   17,   22,   22), # State 13
+    (  14,   14,   14,   15,   14,   14,   14,   14,   14), # State 14
+    (  14,   14,   14,   15,   14,   14,   16,   14,   14), # State 15
+    (None, None, None, None, None, None, None, None, None, None, None, None, None), # State 16 (/* comment */)
+    (  17,   17,   17,   17,   17,   17,   17,   18,   17,   17,   17,   17,   17), # State 17 
+    (None, None, None, None, None, None, None, None, None, None, None, None, None), # State 18 (// comment\n)
+    (  19, None, None, None, None, None, None,   19, None, None, None, None, None), # State 19 (newline + whitespace)
+    (None, None, None, None, None, None, None, None, None, None, None, None, None), # State 20 (invalid input)
+    (None, None, None, None, None, None, None, None, None, None, None, None, None), # State 21 (symbol *)
+    (None, None, None, None, None, None, None, None, None, None, None, None, None), # State 22 (invalid comment)
+    (None, None, None, None, None, None, None, None, None, None, None, None, None), # State 23 RAZD
+    (4, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 25, 25), # State 24 NUM exp part
+    (4, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4), # State 25 NUM exp 
+    (   3,    26,    4,    3,    3,    3,    3,    3,    4,  4, 4, 4,  4), # State 26 number exp 
 )
 
-F = {1, 3, 6, 10, 11, 12, 16, 18, 19, 20, 21, 23} # все принимающие состояния
-Fstar = {3, 6, 11, 21}                        # принимающие состояния, которые требуют возврата последнего символа во входной поток
-unclosed_comment_states = {14, 15, 17}
+F = {1, 3, 6, 10, 11, 12, 16, 18, 19, 20, 21} # all accepting states
+Fstar = {3, 6, 11, 21}                        # accepting states that require the last character to be returned to the input stream
+unclosed_comment_states = {14, 15, 17}       
 
 whitespaces = {' ', '\r', '\t', '\v', '\f'} # \n исключен, так как имеет специальное значение в однострочных комментариях
 
@@ -184,11 +197,11 @@ class Scanner(object):
         self.read_input()
 
         # лексическая спецификация
-        self._symbols = {',', ';', ':', '(', ')', '{', '}', '+', '-','&&','^','#','@','&','.'} # = и * исключены
+        self._symbols = {',', ';', ':', '(', ')', '{', '}', '-','^','#','@','&','.','|'} # = и * исключены
         self.letters = {chr(i) for i in range(65, 91)} | {chr(i) for i in range(97, 123)}
         self.digits = {str(i) for i in range(0, 10)}
         self.symbols = self._symbols | {"*", "="}
-        #
+        
         
 
         razd = [
@@ -373,6 +386,7 @@ class Scanner(object):
                     a = self.input[-1]
                 col = self._resolve_dfa_table_column(a)
                 next_s = token_dfa[s][col]
+            
 
                 if s in state_to_error_message:  # находимся ли мы в состоянии ошибки?
                     if s == 22:
@@ -401,7 +415,7 @@ class Scanner(object):
                         save_state = next_s
                     input_ended = True
                     break
-
+                print(s)       
                 s = next_s
 
             if error_occurred or input_ended:
@@ -425,9 +439,22 @@ class Scanner(object):
                      else:
                         token = "KEYWORD"  # если это одиночный символ, то ключевое слово
 
+                elif lexim == "|":  
+                    if len(self.input) > 0 and self.input[0] == "|":  # проверяем следующий символ
+                         self.input = self.input[1:]  # убираем второй & из потока
+                         token = "RAZD"  # это разделитель &&
+                         lexim = "||"
+                    else:
+                        
+                        SymbolTableManager.error_flag = True
+                        self._lexical_errors.append((self.line_number, lexim, 'invalid input'))
+                        continue
+
+                
+
                 if token == "SYMBOL":
                     token = "KEYWORD" if lexim in self.keywords else "SYMBOL"  
-
+ 
                 if token == "SYMBOL":
                     token = "RAZD" if lexim in self.razd else "SYMBOL"      
                    
