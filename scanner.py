@@ -130,7 +130,7 @@ state_to_error_message = {
 
 token_dfa = (
     # Input character types
-    #   w     d     l     *     =     s     #    \n     o    E      e       +        - 
+    #   w     d     l     *     =     s     /    \n     o    E      e       +        - 
     #   0     1     2     3     4     5     6     7     8    9      10      11      12
     (   1,    2,    5,    7,    9,   12,   13,   19,   20,   5,     5,      23 ,     23), # State 0 (initial state)
     (   1, None, None, None, None, None, None,    1, None, None, None,  None,  None), # State 1 (whitespace)
@@ -197,7 +197,7 @@ class Scanner(object):
         self.read_input()
 
         # лексическая спецификация
-        self._symbols = {',', ';', ':', '(', ')', '{', '}', '-','^','#','@','&','.','|'} # = и * исключены
+        self._symbols = {',', ';', ':', '(', ')', '{', '}', '-','.','~','/'} # = и * исключены
         self.letters = {chr(i) for i in range(65, 91)} | {chr(i) for i in range(97, 123)}
         self.digits = {str(i) for i in range(0, 10)}
         self.symbols = self._symbols | {"*", "="}
@@ -205,19 +205,19 @@ class Scanner(object):
         
 
         razd = [
-            "NEQ",       # 0
-            "EQV",       # 1
-            "LOWT",      # 2
-            "LOWE",      # 3
-            "GRT",       # 4
-            "GRE",       # 5
-            "add",       # 6
-            "disa",      # 7
-            "||",        # 8
-            "umn",       # 9
-            "del",       # 10
-            "&&",        # 11
-            "^",         # 12
+            "NE",       # 0
+            "EQ",       # 1
+            "LT",      # 2
+            "LE",      # 3
+            "GT",       # 4
+            "GE",       # 5
+            "plus",       # 6
+            "min",      # 7
+            "or",        # 8
+            "mult",       # 9
+            "div",       # 10
+            "and",        # 11
+            "~",         # 12
             "+",         # 13
             "-",         # 14
             "as",        # 15
@@ -226,32 +226,30 @@ class Scanner(object):
             ")",         # 18
             ".",         # 19
             ",",         # 20
-            ";",         # 21
-            "#",         # 22
+            "{",         # 21
+            "}",         # 22
         ]
         self.identifiers = razd
         self.razd = set(razd)
 
         #
         keywords = [
-            "begin",     # 0
-            "end",       # 1
-            "var",       # 2
-            "if",        # 3
-            "then",      # 4
-            "else",      # 5
-            "for",       # 6
-            "to",        # 7
-            "false",     # 8
+            "end",     # 0
+            "dim",       # 1
+            "integer",       # 2
+            "real",        # 3
+            "boolean",      # 4
+            "if",      # 5
+            "then",       # 6
+            "else",        # 7
+            "for",     # 8
             "do",        # 9
-            "next",      # 10
+            "to",      # 10
             "read",      # 11
             "write",     # 12
             "while",     # 13
             "true",      # 14
-            "@",      # 15
-            "#",      # 16
-            "&",      # 17
+            "false",      # 15
         ]
         self.identifiers = keywords
         self.keywords = set(keywords)
@@ -431,24 +429,6 @@ class Scanner(object):
                     self._switch_line(lexim.count("\n"))  # обновляем номер строки и т.д.
                     continue  # переходим к следующему токену
                 
-                if lexim == "&":  # если символ — это одиночный &
-                     if len(self.input) > 0 and self.input[0] == "&":  # проверяем следующий символ
-                         self.input = self.input[1:]  # убираем второй & из потока
-                         token = "RAZD"  # это разделитель &&
-                         lexim = "&&"
-                     else:
-                        token = "KEYWORD"  # если это одиночный символ, то ключевое слово
-
-                elif lexim == "|":  
-                    if len(self.input) > 0 and self.input[0] == "|":  # проверяем следующий символ
-                         self.input = self.input[1:]  # убираем второй & из потока
-                         token = "RAZD"  # это разделитель &&
-                         lexim = "||"
-                    else:
-                        
-                        SymbolTableManager.error_flag = True
-                        self._lexical_errors.append((self.line_number, lexim, 'invalid input'))
-                        continue
 
                 
 
