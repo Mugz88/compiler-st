@@ -93,6 +93,8 @@ char_to_col = {        # сокращения в DFA
     "e": 10,
     "+": 11,
     "-": 12,
+    ".": 13,
+
 
 }
 
@@ -130,38 +132,40 @@ state_to_error_message = {
 
 token_dfa = (
     # Input character types
-    #   w     d     l     *     =     s     #    \n     o    E      e       +        - 
-    #   0     1     2     3     4     5     6     7     8    9      10      11      12
-    (   1,    2,    5,    7,    9,   12,   13,   19,   20,   5,     5,      23 ,     23), # State 0 (initial state)
-    (   1, None, None, None, None, None, None,    1, None, None, None,  None,  None), # State 1 (whitespace)
-    (   3,    2,    24,    3,    3,    3,    3,    3, 4,   24, 24, 4,  4), # State 2 
-    (None, None, None, None, None, None, None, None, None, None, None, None, None), # State 3 (number)
-    (None, None, None, None, None, None, None, None, None, None, None, None, None), # State 4 (illegal number)
-    (   6,    5,    5,    6,    6,    6,    6,    6,   20,   5,  5, 6, 6), # State 5 
-    (None, None, None, None, None, None, None, None, None, None, None, None, None), # State 6 (id or keyword)
+    #   w     d     l     *     =     s     #    \n     o    E      e       +        -    .                                 всего 14 символов
+    #   0     1     2     3     4     5     6     7     8    9      10      11      12      13
+    (   1,    2,    5,    7,    9,   12,   13,   19,   20,   5,     5,      23 ,     23, 23 ), # State 0 (initial state)
+    (   1, None, None, None, None, None, None,    1, None, None, None,  None,  None,  None), # State 1 (whitespace)
+    (   3,    2,    24,    3,    3,    3,    3,    3, 4,   24, 24, 4,  4,27), # State 2 
+    (None, None, None, None, None, None, None, None, None, None, None, None, None, None), # State 3 (number)
+    (None, None, None, None, None, None, None, None, None, None, None, None, None, None), # State 4 (illegal number)
+    (   6,    5,    5,    6,    6,    6,    6,    6,   20,   5,  5, 20, 20,20), # State 5 
+    (None, None, None, None, None, None, None, None, None, None, None, None, None, None), # State 6 (id or keyword)
     (  21,   21,   21,   21,   21,   21,    8,   21,   20), # State 7 хз что это
-    (None, None, None, None, None, None, None, None, None, None, None, None, None), # State 8 (unmatched */)
+    (None, None, None, None, None, None, None, None, None, None, None, None, None, None), # State 8 (unmatched */)
     (  11,   11,   11,   11,   10,   11,   11,   11,   20), # State 9 хз 
-    (None, None, None, None, None, None, None, None, None, None, None, None, None), # State 10 (symbol ==)
-    (None, None, None, None, None, None, None, None, None, None, None, None, None), # State 11 (symbol =)
-    (None, None, None, None, None, None, None, None, None, None, None, None, None), # State 12 (symbol)
+    (None, None, None, None, None, None, None, None, None, None, None, None, None, None), # State 10 (symbol ==)
+    (None, None, None, None, None, None, None, None, None, None, None, None, None, None), # State 11 (symbol =)
+    (None, None, None, None, None, None, None, None, None, None, None, None, None, None), # State 12 (symbol)
     (  22,   22,   22,   14,   22,   22,   17,   22,   22), # State 13
-    (  14,   14,   14,   15,   14,   14,   14,   14,   14), # State 14
+    (  14,   14,   14,   15,   14,   14,   14,   14,   14), # State 14            сюда бы дописать столбцы если что
     (  14,   14,   14,   15,   14,   14,   16,   14,   14), # State 15
-    (None, None, None, None, None, None, None, None, None, None, None, None, None), # State 16 (/* comment */)
-    (  17,   17,   17,   17,   17,   17,   17,   18,   17,   17,   17,   17,   17), # State 17 
-    (None, None, None, None, None, None, None, None, None, None, None, None, None), # State 18 (// comment\n)
-    (  19, None, None, None, None, None, None,   19, None, None, None, None, None), # State 19 (newline + whitespace)
-    (None, None, None, None, None, None, None, None, None, None, None, None, None), # State 20 (invalid input)
-    (None, None, None, None, None, None, None, None, None, None, None, None, None), # State 21 (symbol *)
-    (None, None, None, None, None, None, None, None, None, None, None, None, None), # State 22 (invalid comment)
-    (None, None, None, None, None, None, None, None, None, None, None, None, None), # State 23 RAZD
-    (4, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 25, 25), # State 24 NUM exp part
-    (4, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4), # State 25 NUM exp 
-    (   3,    26,    4,    3,    3,    3,    3,    3,    4,  4, 4, 4,  4), # State 26 number exp 
+    (None, None, None, None, None, None, None, None, None, None, None, None, None, None), # State 16 (/* comment */)
+    (  17,   17,   17,   17,   17,   17,   17,   18,   17,   17,   17,   17,   17,   17), # State 17 
+    (None, None, None, None, None, None, None, None, None, None, None, None, None, None), # State 18 (// comment\n)
+    (  19, None, None, None, None, None, None,   19, None, None, None, None, None, None), # State 19 (newline + whitespace)
+    (None, None, None, None, None, None, None, None, None, None, None, None, None, None), # State 20 (invalid input)
+    (None, None, None, None, None, None, None, None, None, None, None, None, None, None), # State 21 (symbol *)
+    (None, None, None, None, None, None, None, None, None, None, None, None, None, None), # State 22 (invalid comment)
+    (None, None, None, None, None, None, None, None, None, None, None, None, None, None), # State 23 RAZD
+    (4, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 25, 25,4), # State 24 NUM exp part
+    (4, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,4), # State 25 NUM exp 
+    (   3,    26,    4,    3,    3,    3,    3,    3,    4,  4, 4, 4,  4,4), # State 26 number exp 
+    (   4,    28,    4,    3,    3,    3,    3,    3,    4,  4, 4, 4,  4,4), # State 27 number with .
+    (   3,    28,    24,    3,    3,    3,    3,    3,    24,  24, 4, 4,  4,4), # State 28 number with .  end .
 )
 
-F = {1, 3, 6, 10, 11, 12, 16, 18, 19, 20, 21} # all accepting states
+F = {1, 3, 6, 10, 11, 12, 16, 18, 19, 20, 21,23} # all accepting states
 Fstar = {3, 6, 11, 21}                        # accepting states that require the last character to be returned to the input stream
 unclosed_comment_states = {14, 15, 17}       
 
@@ -197,10 +201,10 @@ class Scanner(object):
         self.read_input()
 
         # лексическая спецификация
-        self._symbols = {',', ';', ':', '(', ')', '{', '}','^','#','@','&','.','|'} # = и * исключены
+        self._symbols = {',', ';', ':', '(', ')', '{', '}','^','#','@','&','|'} # = и * исключены
         self.letters = {chr(i) for i in range(65, 91)} | {chr(i) for i in range(97, 123)}
         self.digits = {str(i) for i in range(0, 10)}
-        self.symbols = self._symbols | {"*", "="}
+        self.symbols = self._symbols | {"*", "."}
         
         
 
