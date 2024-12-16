@@ -15,25 +15,25 @@ script_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 script_dir = os.path.join(script_dir, "compiler-st")
 
 non_terminal_to_missing_construct = {
-    "Program"                       : "int ID;",
-    "Declaration-list"              : "int ID;",
-    "Declaration"                   : "int ID;",
-    "Declaration-initial"           : "int ID",
+    "Program"                       : "integer ID;",
+    "Declaration-list"              : "integer ID;",
+    "Declaration"                   : "integer ID;",
+    "Declaration-initial"           : "integer ID",
     "Declaration-prime"             : ";",
     "Var-declaration-prime"         : ";",
-    "Fun-declaration-prime"         : "(void) {int ID;}",
-    "Type-specifier"                : "int",
+    "Fun-declaration-prime"         : "(void) {integer ID;}",
+    "Type-specifier"                : "integer",
     "Params"                        : "void",
     "Param-list-void-abtar"         : "ID",
-    "Param-list"                    : ", int ID",
-    "Param"                         : "int ID",
+    "Param-list"                    : ", integer ID",
+    "Param"                         : "integer ID",
     "Param-prime"                   : "[]",
-    "Compound-stmt"                 : "{int ID;}",
+    "Compound-stmt"                 : "{integer ID;}",
     "Statement-list"                : ";",
     "Statement"                     : ";",
     "Expression-stmt"               : ";",
-    "Selection-stmt"                : "if (NUM); else;",
-    "Iteration-stmt"                : "while (NUM);",
+    "Selection-stmt"                : "if (NUM) then; else;",
+    "Iteration-stmt"                : "while (NUM) do;",
     "Return-stmt"                   : "return;",
     "Return-stmt-prime"             : ";",
     "Switch-stmt"                   : "switch (NUM) {}",
@@ -45,17 +45,17 @@ non_terminal_to_missing_construct = {
     "H"                             : "NUM",
     "Simple-expression-zegond"      : "NUM",
     "Simple-expression-prime"       : "()",
-    "C"                             : "< NUM",
-    "Relop"                         : "<",
+    "C"                             : "LT NUM",
+    "Relop"                         : "LT",
     "Additive-expression"           : "NUM",
     "Additive-expression-prime"     : "()",
-    "Additive-expression-zegond"    : "NUM",
-    "D"                             : "+ NUM",
-    "Addop"                         : "+",
+    "Additive-expression-zegond"   : "NUM",
+    "D"                             : "plus NUM",
+    "Addop"                         : "plus",
     "Term"                          : "NUM",
     "Term-prime"                    : "()",
     "Term-zegond"                   : "NUM",
-    "G"                             : "* NUM",
+    "G"                             : "mult NUM",
     "Factor"                        : "NUM",
     "Var-call-prime"                : "()",
     "Var-prime"                     : "[NUM]",
@@ -78,9 +78,9 @@ productions = (
     "#SA_ASSIGN_LENGTH ;",                                                                                                            
     "[ #SA_ASSIGN_LENGTH NUM ] ;",                                                                                                    
     "( #SA_INC_SCOPE #SA_SAVE_MAIN Params #SA_ASSIGN_FUN_ATTRS ) #SA_MAIN_CHECK Compound-stmt #CG_CALC_STACKFRAME_SIZE #CG_RETURN_SEQ_CALLEE #SA_DEC_SCOPE",                            
-    "int",                                                                                                          
+    "integer",                                                                                                          
     "void",                                                 
-    "#SA_SAVE_TYPE #SA_SAVE_PARAM int #SA_ASSIGN_TYPE ID #SA_ASSIGN_PARAM_ROLE Param-prime Param-list",                        
+    "#SA_SAVE_TYPE #SA_SAVE_PARAM integer #SA_ASSIGN_TYPE ID #SA_ASSIGN_PARAM_ROLE Param-prime Param-list",                        
     "void Param-list-void-abtar",                           
     "ID Param-prime Param-list",                              
     "EPSILON",                                              
@@ -102,8 +102,8 @@ productions = (
     "#SA_CHECK_WHILE #CG_CONT_JP continue ;",                                           
     "#SA_CHECK_BREAK #CG_BREAK_JP_SAVE break ;",                                              
     ";",                                                    
-    "if ( Expression ) #CG_SAVE Statement else #CG_ELSE Statement #CG_IF_ELSE",           
-    "#SA_PUSH_WHILE while #CG_LABEL #CG_INIT_WHILE_STACKS ( Expression ) #CG_SAVE Statement #CG_WHILE #SA_POP_WHILE",                       
+    "if ( Expression ) #CG_SAVE Statement then else #CG_ELSE Statement #CG_IF_ELSE",           
+    "#SA_PUSH_WHILE while #CG_LABEL #CG_INIT_WHILE_STACKS ( Expression ) #CG_SAVE Statement do #CG_WHILE #SA_POP_WHILE",                       
     "return Return-stmt-prime #CG_SET_RETVAL #CG_RETURN_SEQ_CALLEE",                             
     ";",                                                    
     "Expression ;",                                         
@@ -124,19 +124,19 @@ productions = (
     "Additive-expression-prime C",                          
     "#CG_SAVE_OP Relop Additive-expression #SA_TYPE_CHECK #CG_RELOP",                            
     "EPSILON",                                              
-    "<",                                                    
-    "==",                                                   
+    "LT",                                                    
+    "EQ",                                                   
     "Term D",                                               
     "Term-prime D",                                         
     "Term-zegond D",                                        
     "#CG_SAVE_OP Addop Term #SA_TYPE_CHECK #CG_ADDOP D",                                         
     "EPSILON",                                              
-    "+",                                                    
-    "-",                                                    
+    "plus",                                                    
+    "min",                                                    
     "Factor G",                                             
     "Factor-prime G",                                       
     "Factor-zegond G",                                      
-    "* Factor #SA_TYPE_CHECK #CG_MULT G",                                           
+    "mult Factor #SA_TYPE_CHECK #CG_MULT G",                                           
     "EPSILON",                                              
     "( Expression )",                                       
     "#SA_CHECK_DECL #SA_SAVE_FUN #SA_SAVE_TYPE_CHECK #CG_PUSH_ID ID Var-call-prime",                                    
@@ -168,7 +168,7 @@ terminal_to_col = {
     "]"         : 4,
     "("         : 5,
     ")"         : 6,
-    "int"       : 7,
+    "integer"   : 7,
     "void"      : 8,
     ","         : 9,
     "{"         : 10,
@@ -184,11 +184,11 @@ terminal_to_col = {
     ":"         : 20,
     "default"   : 21,
     "="         : 22,
-    "<"         : 23,
-    "=="        : 24,
-    "+"         : 25,
-    "-"         : 26,
-    "*"         : 27,
+    "LT"        : 23,
+    "EQ"        : 24,
+    "plus"      : 25,
+    "min"       : 26,
+    "mult"      : 27,
     "$"         : 28
 }
 
@@ -246,7 +246,7 @@ non_terminal_to_row = {
 
 parsing_table = (
     # 0    1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28
-    #ID    ;    [  NUM    ]    (    )  int void    ,    {    } cont break  if else whil retu swit case    : defa    =    <   ==    +    -    *    $
+    #ID    ;    [  NUM    ]    (    )  integer void    ,    {    } cont break  if else whil retu swit case    : defa    =    LT   EQ    plus min    mult $
     (88,  88,  88,  88,  88,  88,  88,   1,   1,  88,  88,  88,  88,  88,  88,  88,  88,  88,  88,  88,  88,  88,  88,  88,  88,  88,  88,  88,  87), # 1  Program
     ( 3,   3,  88,   3,  88,   3,  88,   2,   2,  88,   3,   3,   3,   3,   3,  88,   3,   3,   3,  88,  88,  88,  88,  88,  88,  88,  88,  88,   3), # 2  Declaration-list
     (87,  87,  88,  87,  88,  87,  88,   4,   4,  88,  87,  88,  87,  87,  87,  88,  87,  87,  87,  88,  88,  88,  88,  88,  88,  88,  88,  88,  87), # 3  Declaration
@@ -268,9 +268,9 @@ parsing_table = (
     (87,  87,  88,  87,  88,  87,  88,  88,  88,  88,  87,  87,  87,  87,  87,  87,  36,  87,  87,  87,  88,  87,  88,  88,  88,  88,  88,  88,  87), # 19 Iteration-stmt
     (87,  87,  88,  87,  88,  87,  88,  88,  88,  88,  87,  87,  87,  87,  87,  87,  87,  37,  87,  87,  88,  87,  88,  88,  88,  88,  88,  88,  87), # 20 Return-stmt
     (39,  38,  88,  39,  88,  39,  88,  88,  88,  88,  87,  87,  87,  87,  87,  87,  87,  87,  87,  87,  88,  87,  88,  88,  88,  88,  88,  88,  87), # 21 Return-stmt-prime
-    (87,  87,  88,  87,  88,  87,  88,  88,  88,  88,  87,  87,  87,  87,  87,  87,  87,  87,  40,  87,  88,  87,  88,  88,  88,  88,  88,  88,  87), # 22 Switch-stmt
+    (87,  87,  88,  87,  88,  87,  88,  88,  88,  88,  87,  87,  87,  87,  87,  87,  87,  87,  87,  87,  88,  87,  88,  88,  88,  88,  88,  88,  87), # 22 Switch-stmt
     (42,  88,  88,  42,  88,  42,  88,  88,  88,  88,  88,  42,  88,  88,  88,  88,  88,  88,  88,  41,  88,  42,  88,  88,  88,  88,  88,  88,  87), # 23 Case-stmts
-    (87,  88,  88,  87,  88,  87,  88,  88,  88,  88,  88,  87,  88,  88,  88,  88,  88,  88,  88,  43,  88,  87,  88,  88,  88,  88,  88,  88,  87), # 24 Case-stmt
+    (87,  88,  88,  87,  88,  87,  88,  88,  88,  88,  88,  87,  88,  88,  88,  88,  88,  88,  88,  88,  88,  87,  88,  88,  88,  88,  88,  88,  87), # 24 Case-stmt
     (88,  88,  88,  88,  88,  88,  88,  88,  88,  88,  88,  45,  88,  88,  88,  88,  88,  88,  88,  88,  88,  44,  88,  88,  88,  88,  88,  88,  87), # 25 Default-stmt
     (47,  87,  88,  46,  87,  46,  87,  88,  88,  87,  88,  88,  88,  88,  88,  88,  88,  88,  88,  88,  88,  88,  88,  88,  88,  88,  88,  88,  87), # 26 Expression
     (88,  50,  49,  88,  50,  50,  50,  88,  88,  50,  88,  88,  88,  88,  88,  88,  88,  88,  88,  88,  88,  88,  48,  50,  50,  50,  50,  50,  50), # 27 B
@@ -298,7 +298,6 @@ parsing_table = (
     (88,  88,  88,  88,  88,  88,  86,  88,  88,  85,  88,  88,  88,  88,  88,  88,  88,  88,  88,  88,  88,  88,  88,  88,  88,  88,  88,  88,  87)  # 49 Arg-list-prime
 )
 
-
 class Parser(object):
     def __init__(self, input_file):
         if not os.path.isabs(input_file):
@@ -311,12 +310,11 @@ class Parser(object):
         self.root = Node("Program") # Start symbol
         self.parse_tree = self.root
         self.stack = [Node("$"), self.root]
-        
+
         self.parse_tree_file = os.path.join(script_dir, "output", "parse_tree.txt")
         self.syntax_error_file = os.path.join(script_dir, "errors", "syntax_errors.txt")
 
-
-    @property    
+    @property
     def syntax_errors(self):
         syntax_errors = []
         if self._syntax_errors:
@@ -326,7 +324,6 @@ class Parser(object):
             syntax_errors.append("There is no syntax error.\n")
         return "".join(syntax_errors)
 
-
     def save_parse_tree(self):
         with open(self.parse_tree_file, "w", encoding="utf-8") as f:
             for pre, _, node in RenderTree(self.parse_tree):
@@ -335,12 +332,10 @@ class Parser(object):
                 else:
                     f.write(f"{pre}{node.name}\n")
 
-
     def save_syntax_errors(self):
         with open(self.syntax_error_file, "w") as f:
             f.write(self.syntax_errors)
 
-    
     def _remove_node(self, node):
         try:
             # remove node from the parse tree
@@ -349,17 +344,15 @@ class Parser(object):
         except IndexError:
             pass
 
-
     def _clean_up_tree(self):
         ''' remove non terminals and unmet terminals from leaf nodes '''
         remove_nodes = []
         for node in PreOrderIter(self.parse_tree):
             if not node.children and not hasattr(node, "token") and node.name != "EPSILON":
                 remove_nodes.append(node)
-        
+
         for node in remove_nodes:
             self._remove_node(node)
-    
 
     def parse(self):
         clean_up_needed = False
@@ -441,7 +434,6 @@ class Parser(object):
             self._clean_up_tree()
         self.code_generator.code_gen("FINISH_PROGRAM", None)
 
-
 def main(input_path):
     import time
     SymbolTableManager.init()
@@ -458,7 +450,6 @@ def main(input_path):
     parser.scanner.save_tokens()
     parser.semantic_analyzer.save_semantic_errors()
     parser.code_generator.save_output()
-
 
 if __name__ == "__main__":
     input_path = os.path.join(script_dir, "input/input_simple.c")

@@ -1,7 +1,4 @@
 56e-2
-
-integer num = 10
-num min 3
 end							      
 dim
 integer
@@ -41,4 +38,6 @@ as
 )
 .
 ,
+integer num = 10
+num min 3
 
