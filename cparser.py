@@ -303,6 +303,7 @@ class Parser(object):
     def __init__(self, input_file):
         if not os.path.isabs(input_file):
             input_file = os.path.join(script_dir, input_file)
+        print("Parsing", input_file)
         self.scanner = Scanner(input_file)
         self.semantic_analyzer = SemanticAnalyser()
         self.code_generator = CodeGen()
@@ -432,7 +433,7 @@ class Parser(object):
                         if node.name != "EPSILON":
                             self.stack.append(node)
 
-                # print(f"{X} -> {' '.join(rhs)}")  # prints out the productions used
+                print(f"{X} -> {' '.join(rhs)}")  # prints out the productions used
                 new_nodes = []
 
         self.semantic_analyzer.eof_check(self.scanner.line_number)

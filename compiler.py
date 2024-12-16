@@ -58,6 +58,7 @@ def compile(source_file):
         plat = platform.system()
         if plat == "Windows":
             tester_file = os.path.join(script_dir, "interpreter", "tester_Windows.exe")
+        else:
             raise RuntimeError("Unsupported operating system for code execution!")
         output_file = os.path.join(script_dir, "output", "output.txt")
         output_dir = os.path.dirname(output_file)

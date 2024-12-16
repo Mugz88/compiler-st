@@ -1,1 +1,19 @@
-There is no lexical errors.
+#2 : Lexical Error! 'result[' rejected, reason: invalid input.
+#2 : Lexical Error! '50]' rejected, reason: illegal number.
+#5 : Lexical Error! 'result[' rejected, reason: invalid input.
+#5 : Lexical Error! ']' rejected, reason: invalid input.
+#7 : Lexical Error! 'result[' rejected, reason: invalid input.
+#7 : Lexical Error! '1]' rejected, reason: illegal number.
+#8 : Lexical Error! 'result[' rejected, reason: invalid input.
+#8 : Lexical Error! '1]' rejected, reason: illegal number.
+#11 : Lexical Error! 'result[' rejected, reason: invalid input.
+#11 : Lexical Error! '1]' rejected, reason: illegal number.
+#14 : Lexical Error! 'result[' rejected, reason: invalid input.
+#14 : Lexical Error! '1]' rejected, reason: illegal number.
+#17 : Lexical Error! 'result[' rejected, reason: invalid input.
+#17 : Lexical Error! '1]' rejected, reason: illegal number.
+#18 : Lexical Error! 'result[' rejected, reason: invalid input.
+#18 : Lexical Error! '1]' rejected, reason: illegal number.
+#26 : Lexical Error! '<' rejected, reason: invalid input.
+#27 : Lexical Error! 'result[' rejected, reason: invalid input.
+#27 : Lexical Error! 'i]' rejected, reason: invalid input.
