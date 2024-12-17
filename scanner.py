@@ -86,7 +86,7 @@ char_to_col = {        # сокращения в DFA
     "*": 3,          # *
     "=": 4,          # =
     "SYMBOL": 5,     # s
-    "#": 6,          # /
+    "/": 6,          # /
     "\n": 7,         # \n
     "OTHER": 8 ,     # o (Любой другой символ, допустимый только внутри блока комментариев) 
     "E": 9,
@@ -132,7 +132,7 @@ state_to_error_message = {
 
 token_dfa = (
     # Input character types
-    #   w     d     l     *     =     s     #    \n     o    E      e       +        -    .                                 всего 14 символов
+    #   w     d     l     *     =     s     /    \n     o    E      e       +        -    .                                 всего 14 символов
     #   0     1     2     3     4     5     6     7     8    9      10      11      12      13
     (   1,    2,    5,    7,    9,   12,   13,   19,   20,   5,     5,      23 ,     23, 23 ), # State 0 (initial state)
     (   1, None, None, None, None, None, None,    1, None, None, None,  None,  None,  None), # State 1 (whitespace)
@@ -147,9 +147,9 @@ token_dfa = (
     (None, None, None, None, None, None, None, None, None, None, None, None, None, None), # State 10 (symbol ==)
     (None, None, None, None, None, None, None, None, None, None, None, None, None, None), # State 11 (symbol =)
     (None, None, None, None, None, None, None, None, None, None, None, None, None, None), # State 12 (symbol)
-    (  22,   22,   22,   14,   22,   22,   17,   22,   22), # State 13
-    (  14,   14,   14,   15,   14,   14,   14,   14,   14), # State 14            сюда бы дописать столбцы если что
-    (  14,   14,   14,   15,   14,   14,   16,   14,   14), # State 15
+    (  22,   22,   22,   14,   22,   22,   17,   22,   22,   22,   22,   22,   22,   22), # State 13
+    (  14,   14,   14,   15,   14,   14,   14,   14,   14,   14,   14,   14,   14,   14), # State 14            сюда бы дописать столбцы если что
+    (  14,   14,   14,   15,   14,   14,   16,   14,   14,   14,   14,   14,   14,   14), # State 15
     (None, None, None, None, None, None, None, None, None, None, None, None, None, None), # State 16 (/* comment */)
     (  17,   17,   17,   17,   17,   17,   17,   18,   17,   17,   17,   17,   17,   17), # State 17 
     (None, None, None, None, None, None, None, None, None, None, None, None, None, None), # State 18 (// comment\n)

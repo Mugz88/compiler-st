@@ -14,6 +14,8 @@
 15.	(RAZD, del)
 16.	(RAZD, &&)
 17.	(RAZD, ^)
+18.	(RAZD, +)
+19.	(RAZD, -)
 20.	(RAZD, as)
 21.	(RAZD, :)
 22.	(RAZD, ()

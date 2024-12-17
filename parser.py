@@ -1,10 +1,3 @@
-'''
-Parser module of the Simple C Compiler
-
-Author:             Pasi Pyrrö
-Date:               20 March 2020
-'''
-
 import os
 from anytree import Node, RenderTree, PreOrderIter
 from scanner import Scanner, SymbolTableManager
