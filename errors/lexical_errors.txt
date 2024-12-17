@@ -1,1 +1,1 @@
-There is no lexical errors.
+#1 : Lexical Error! '56s+2' rejected, reason: e number without e.

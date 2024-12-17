@@ -1,4 +1,5 @@
 import os
+import re
 
 script_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 script_dir = os.path.join(script_dir, "compiler-st")
@@ -428,6 +429,14 @@ class Scanner(object):
                 if token == "WHITESPACE" or token == "COMMENT":  # эти токены не будут возвращены
                     self._switch_line(lexim.count("\n"))  # обновляем номер строки и т.д.
                     continue  # переходим к следующему токену
+
+                if token == "NUM":
+                    # Разрешаем цифры, символы '+' и '-', а также 'e' или 'E', но не другие буквы или символы
+                    if re.search(r'[^0-9eE\+\-]', lexim):  
+                        SymbolTableManager.error_flag = True
+                        self._lexical_errors.append((self.line_number, lexim, "e number without e"))
+                        
+                        continue
 
                 if token == "SYMBOL":
                     token = "KEYWORD" if lexim in self.keywords else "SYMBOL"  

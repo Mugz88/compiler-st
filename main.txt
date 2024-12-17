@@ -1,4 +1,4 @@
-56e-2
+56s+2
 end							      
 dim
 integer
