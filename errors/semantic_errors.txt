@@ -1,1 +1,1 @@
-#3 : Semantic Error! main function not found!
+#10 : Semantic Error! main function not found!

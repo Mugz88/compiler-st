@@ -38,6 +38,5 @@ as
 )
 .
 ,
-integer num = 10
-num min 3
+
 

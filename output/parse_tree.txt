@@ -1,9 +1,5 @@
 Program
-└── Declaration-list
-    ├── Declaration
-    │   └── Declaration-initial
-    │       ├── Type-specifier
-    │       │   └── (KEYWORD, integer)
-    │       └── (ID, num)
-    └── Declaration-list
-        └── EPSILON
+└── Description
+    ├── (KEYWORD, dim)
+    ├── (ID, x)
+    └── (RAZD, :)

@@ -1,44 +1,9 @@
-56e-2
+dim x : integer
+dim y : integer
+dim z : integer
 
-end							      
-dim
-integer
-real
-boolean
-if
-then
-else
-for
-to
-do
-while
-read
-write
-true
-false
-NE
-EQ
-LT
-LE
-GT
-GE
-plus
-min
-or
-mult
-div
-and
-~
-+
--
-as
-:
-{
-}
-(
-)
-.
-,
-integer num = 10
-num min 3
+x as 5
+y as 10
+z as (x plus y) mult (x min y) div 2
 
+write (z)

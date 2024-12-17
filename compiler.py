@@ -7,7 +7,7 @@ import subprocess as sp
 script_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(script_dir, "modules"))
 
-from cparser import Parser
+from parser import Parser
 from scanner import Scanner, SymbolTableManager
 from semantic_analyser import SemanticAnalyser
 from code_gen import CodeGen, MemoryManager
