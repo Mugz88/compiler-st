@@ -14,6 +14,3 @@
 14.	while
 15.	true
 16.	false
-17.	x
-18.	y
-19.	z

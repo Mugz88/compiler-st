@@ -1,9 +1,42 @@
-dim x : integer
-dim y : integer
-dim z : integer
+56e-2
+end							      
+dim
+integer
+real
+boolean
+if
+then
+else
+for
+to
+do
+while
+read
+write
+true
+false
+NE
+EQ
+LT
+LE
+GT
+GE
+plus
+min
+or
+mult
+div
+and
+~
++
+-
+as
+:
+{
+}
+(
+)
+.
+,
 
-x as 5
-y as 10
-z as (x plus y) mult (x min y) div 2
 
-write (z)
