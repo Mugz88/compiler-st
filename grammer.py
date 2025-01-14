@@ -1,5 +1,4 @@
 import os
-import re
 
 # Класс для представления токенов
 class Token:
@@ -10,31 +9,15 @@ class Token:
     def __repr__(self):
         return f"({self.type}, {self.value})"
 
-# Функция для чтения токенов из файла
-def read_tokens(file_path):
-    with open(file_path, 'r') as file:
-        lines = file.readlines()
-    tokens = []
-    for line in lines:
-        matches = re.findall(r'\((.*?), (.*?)\)', line)
-        for match in matches:
-            tokens.append(Token(match[0], match[1]))
-    return tokens
-
 # Грамматический анализатор
 class Parser:
-    def __init__(self, tokens):
-        self.tokens = tokens
+    def __init__(self, scanner):
+        self.scanner = scanner
         self.current_token = None
-        self.pos = -1
         self.advance()
 
     def advance(self):
-        self.pos += 1
-        if self.pos < len(self.tokens):
-            self.current_token = self.tokens[self.pos]
-        else:
-            self.current_token = None
+        self.current_token = self.scanner.get_next_token()
 
     def parse(self):
         try:
@@ -45,7 +28,7 @@ class Parser:
 
     def program(self):
         statements = []
-        while self.current_token and self.current_token.type != 'KEYWORD' and self.current_token.value != 'end':
+        while self.current_token:
             statements.append(self.statement())
         return statements
 
@@ -62,7 +45,7 @@ class Parser:
     def declaration(self):
         self.match('KEYWORD', 'dim')
         identifiers = [self.match('ID')]
-        while self.current_token.type == 'RAZD' and self.current_token.value == ',':
+        while self.current_token and self.current_token.type == 'RAZD' and self.current_token.value == ',':
             self.match('RAZD', ',')
             identifiers.append(self.match('ID'))
         self.match('RAZD', ':')
@@ -79,7 +62,7 @@ class Parser:
         self.match('KEYWORD', 'write')
         self.match('RAZD', '(')
         expressions = [self.expression()]
-        while self.current_token.type == 'RAZD' and self.current_token.value == ',':
+        while self.current_token and self.current_token.type == 'RAZD' and self.current_token.value == ',':
             self.match('RAZD', ',')
             expressions.append(self.expression())
         self.match('RAZD', ')')
@@ -87,7 +70,7 @@ class Parser:
 
     def expression(self):
         operand = self.operand()
-        while self.current_token.type == 'RAZD' and self.current_token.value in ['NE', 'EQ', 'LT', 'LE', 'GT', 'GE']:
+        while self.current_token and self.current_token.type == 'RAZD' and self.current_token.value in ['NE', 'EQ', 'LT', 'LE', 'GT', 'GE']:
             operator = self.match('RAZD')
             right_operand = self.operand()
             operand = ('binary_op', operator, operand, right_operand)
@@ -95,7 +78,7 @@ class Parser:
 
     def operand(self):
         term = self.term()
-        while self.current_token.type == 'RAZD' and self.current_token.value in ['plus', 'min', 'or']:
+        while self.current_token and self.current_token.type == 'RAZD' and self.current_token.value in ['plus', 'min', 'or']:
             operator = self.match('RAZD')
             right_term = self.term()
             term = ('binary_op', operator, term, right_term)
@@ -103,7 +86,7 @@ class Parser:
 
     def term(self):
         factor = self.factor()
-        while self.current_token.type == 'RAZD' and self.current_token.value in ['mult', 'div', 'and']:
+        while self.current_token and self.current_token.type == 'RAZD' and self.current_token.value in ['mult', 'div', 'and']:
             operator = self.match('RAZD')
             right_factor = self.factor()
             factor = ('binary_op', operator, factor, right_factor)
@@ -133,7 +116,7 @@ class Parser:
             raise SyntaxError(f"Unexpected token: {token}")
 
     def match(self, type, value=None):
-        if self.current_token.type == type and (value is None or self.current_token.value == value):
+        if self.current_token and self.current_token.type == type and (value is None or self.current_token.value == value):
             token = self.current_token
             self.advance()
             return token
@@ -201,12 +184,12 @@ class SemanticAnalyzer:
 
 # Основная функция для выполнения анализа
 def main():
-    script_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    script_dir = os.path.join(script_dir, "compiler-st")
-    tokens_file_path = os.path.join(script_dir, 'output', 'tokens.txt')
+    input_file_path = os.path.join(os.path.dirname(__file__), 'main.txt')
+    
+    from scanner import Scanner
 
-    tokens = read_tokens(tokens_file_path)
-    parser = Parser(tokens)
+    scanner = Scanner(input_file_path)
+    parser = Parser(scanner)
     ast = parser.parse()
     if ast is not None:
         print("Abstract Syntax Tree (AST):")

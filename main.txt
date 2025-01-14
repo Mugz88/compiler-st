@@ -1,1 +1,9 @@
-3434hssss
+dim x : integer
+dim y : integer
+dim z : integer
+
+x as 5
+y as 10
+z as (x plus y) mult (x min y) div 2
+
+write (z)

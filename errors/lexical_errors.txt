@@ -1,1 +1,1 @@
-#1 : Lexical Error! '3434hssss' rejected, reason: Invalid number.
+There is no lexical errors.
