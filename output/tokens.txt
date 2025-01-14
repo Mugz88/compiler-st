@@ -1,3 +1,4 @@
+1.	(NUM, 56e-2)
 2.	(KEYWORD, end)
 3.	(KEYWORD, dim)
 4.	(KEYWORD, integer)
@@ -27,8 +28,15 @@
 28.	(RAZD, div)
 29.	(RAZD, and)
 30.	(RAZD, ~)
+31.	(RAZD, +)
+32.	(RAZD, -)
 33.	(RAZD, as)
 34.	(RAZD, :)
 37.	(RAZD, ()
 38.	(RAZD, ))
+39.	(RAZD, .)
 40.	(RAZD, ,)
+41.	(NUM, 545454o)
+42.	(NUM, 3343O)
+43.	(NUM, 454545D)
+44.	(NUM, 01010101B)

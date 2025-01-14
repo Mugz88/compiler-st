@@ -1,10 +1,3 @@
-'''
-Semantic Analyser module of the Simple C Compiler
-
-Author:             Pasi Pyrrö
-Date:               16 March 2020
-'''
-
 import os
 from scanner import SymbolTableManager
 from code_gen import MemoryManager
