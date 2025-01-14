@@ -156,19 +156,19 @@ token_dfa = (
     (None, None, None, None, None, None, None, None, None, None, None, None, None, None, None), # State 21 (symbol *)
     (None, None, None, None, None, None, None, None, None, None, None, None, None, None, None), # State 22 (invalid comment)
     (None, None, None, None, None, None, None, None, None, None, None, None, None, None, None), # State 23 RAZD
-    (   31,    2,    29,    4,    4,    4,    4,    31,    4,    4,    4,   25,   25,    4,    4), # State 24 NUM exp part
+    (  31,    2,   29,    4,    4,    4,    4,    31,    4,    4,    4,   25,   25,    4,    4), # State 24 NUM exp part
     (   4,    2,    4,    4,    4,    4,    4,    4,    4,    4,    4,   24,    4,    4,    4), # State 25 NUM exp 
     (   3,    26,   4,    3,    3,    3,    3,    3,    4,    4,    4,    4,    4,    4,    4), # State 26 number exp 
     (   4,    28,   4,    3,    3,    3,    3,    3,    4,    4,    4,    4,    4,    4,    4), # State 27 number with .
     (   3,    28,  24,    3,    3,    3,    3,    3,    24,  24,    4,    4,    4,    4,    4), # State 28 number with .  end .
-    (   31,    30,  29,   31,   31,   31,   31,   31,   29,  29,    4,    4,    4,    4,    4), # State 29 number HEx
-    (   4,    30,    29,    4,    4,   4,    4,    4,    29,  29, 4, 4,  4,4,4), # State 30 number end dig
+    (  31,    30,  29,   31,   31,   31,   31,   31,   29,  29,    4,    4,    4,    4,    4), # State 29 number HEx
+    (   4,    30,  29,    4,    4,    4,    4,    4,    29,  29, 4, 4,  4,4,4), # State 30 number end dig
     ( None, None, None, None, None, None, None, None, None, None, None, None, None, None, None), # State 31 Nbodh
 
 )
 
 F = {1, 3, 6, 10, 11, 12, 16, 18, 19, 20, 21,23,31} # all accepting states
-Fstar = {3, 6, 11, 21}                        # accepting states that require the last character to be returned to the input stream
+Fstar = {3, 6, 11, 21, 31}                        # accepting states that require the last character to be returned to the input stream
 unclosed_comment_states = {14, 15, 17}       
 
 whitespaces = {' ', '\r', '\t', '\v', '\f'} # \n исключен, так как имеет специальное значение в однострочных комментариях
@@ -444,46 +444,45 @@ class Scanner(object):
                         continue
 
                 if token == "Nbodh":  
-                    if lexim[-2] == 'b' or lexim[-2] == 'B':
+                    if lexim[-1] in ['b', 'B']:
                         # Возвращаемся к началу слова и проверяем его на наличие только 0, 1, b, B
-                        if re.search(r'[^01 ]', lexim[:-2]): #пробел важен 
+                        if re.search(r'[^01 ]', lexim[:-1]): #пробел важен 
                             SymbolTableManager.error_flag = True
                             self._lexical_errors.append((self.line_number, lexim, "Invalid binary number"))
                             continue  # Пропускаем токен и продолжаем 
                         else:
                             token = "NUM"
-                            
 
-                if token == "Nbodh":   
-                    if lexim[-2] == 'o' or lexim[-2] == 'O':
+                    elif lexim[-1] in ['o', 'O']:
                         # Возвращаемся к началу слова и проверяем его на наличие только 0, 1, b, B
-                        if re.search(r'[^0-7 ]', lexim[:-2]): #пробел важен 
+                        if re.search(r'[^0-7 ]', lexim[:-1]): #пробел важен 
                             SymbolTableManager.error_flag = True
                             self._lexical_errors.append((self.line_number, lexim, "Invalid octa number"))
                             continue  # Пропускаем токен и продолжаем 
                         else:
                             token = "NUM"
-
-                if token == "Nbodh":  
-                    if lexim[-2] == 'D' or lexim[-2] == 'd':
+                            
+                    elif lexim[-1] in ['d', 'D']:
                         # Возвращаемся к началу слова и проверяем его на наличие только 0, 1, b, B
-                        if re.search(r'[^0-9 ]', lexim[:-2]): #пробел важен 
+                        if re.search(r'[^0-9 ]', lexim[:-1]): #пробел важен 
                             SymbolTableManager.error_flag = True
                             self._lexical_errors.append((self.line_number, lexim, "Invalid deca number"))
                             continue  # Пропускаем токен и продолжаем 
                         else:
                             token = "NUM"
 
-                if token == "Nbodh":  
-                    if lexim[-2] == 'H' or lexim[-2] == 'h':
+                    elif lexim[-1] in ['h', 'H']:
                         # Возвращаемся к началу слова и проверяем его на наличие только 0, 1, b, B
-                        if re.search(r'[^0-9A-F ]', lexim[:-2]): #пробел важен 
+                        if re.search(r'[^0-9A-F ]', lexim[:-1]): #пробел важен 
                             SymbolTableManager.error_flag = True
                             self._lexical_errors.append((self.line_number, lexim, "Invalid hex number"))
                             continue  # Пропускаем токен и продолжаем 
                         else:
                             token = "NUM"
-
+                    else:
+                        self._lexical_errors.append((self.line_number, lexim, "Invalid number"))
+                        continue  # Пропускаем токен и продолжаем 
+                        
                 if token == "SYMBOL":
                     token = "KEYWORD" if lexim in self.keywords else "SYMBOL"  
  
