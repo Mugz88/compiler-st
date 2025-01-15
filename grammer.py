@@ -29,7 +29,7 @@ class Parser:
         token = self.scanner.get_next_token()
         type = token[0]
         value = token[1]
-        #print(f"Current token: {type} {value}")
+        print(f"Current token: {type} {value}")
         self.current_token = Token(type, value)
 
     def parse(self):
@@ -211,7 +211,7 @@ class SemanticAnalyzer:
             return
         method_name = 'visit_' + node[0]
         visitor = getattr(self, method_name, self.generic_visit)
-        #print(f"Visiting {node}")
+        print(f"Visiting {node}")
         return visitor(node)
 
     def visit_declaration(self, node):

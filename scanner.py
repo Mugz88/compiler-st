@@ -457,6 +457,7 @@ class Scanner(object):
                             continue  # Пропускаем токен и продолжаем 
                         else:
                             token = "NUM"
+                            self.nums.append(lexim)
 
                     elif lexim[-1] in ['o', 'O']:
                         # Возвращаемся к началу слова и проверяем его на наличие только 0, 1, b, B
@@ -466,6 +467,7 @@ class Scanner(object):
                             continue  # Пропускаем токен и продолжаем 
                         else:
                             token = "NUM"
+                            self.nums.append(lexim)
                             
                     elif lexim[-1] in ['d', 'D']:
                         # Возвращаемся к началу слова и проверяем его на наличие только 0, 1, b, B
@@ -475,6 +477,7 @@ class Scanner(object):
                             continue  # Пропускаем токен и продолжаем 
                         else:
                             token = "NUM"
+                            self.nums.append(lexim)
 
                     elif lexim[-1] in ['h', 'H']:
                         # Возвращаемся к началу слова и проверяем его на наличие только 0, 1, b, B
@@ -484,6 +487,7 @@ class Scanner(object):
                             continue  # Пропускаем токен и продолжаем 
                         else:
                             token = "NUM"
+                            self.nums.append(lexim)
                     else:
                         self._lexical_errors.append((self.line_number, lexim, "Invalid number"))
                         continue  # Пропускаем токен и продолжаем 

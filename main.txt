@@ -1,8 +1,8 @@
 dim x : integer
 dim y : integer
 dim z : integer
-
-x as 565555
+dim i :integer
+x as 5
 y as 10
 z as (x plus y) mult (x min y) div 2
 
@@ -13,4 +13,3 @@ to i LT 10
 do i as i plus 1
 
 end
-
