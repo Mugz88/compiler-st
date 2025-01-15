@@ -143,13 +143,33 @@ class MainWindow(QMainWindow):
         else:
             self.result_output.setPlainText("Файл tokens.txt не найден.")
 
-        lex_erorrs_file = os.path.join(os.path.dirname(__file__), 'errors', 'lexical_errors.txt')
-        if os.path.exists(lex_erorrs_file):
-            with open(lex_erorrs_file, 'r') as file:
-                erorrs_content = file.read()
-            self.bottom_result_output.setPlainText(erorrs_content)
+        self.combined_errors_content = ""   
+        
+        lex_errors_file = os.path.join(os.path.dirname(__file__), 'errors', 'lexical_errors.txt')
+        if os.path.exists(lex_errors_file):
+            with open(lex_errors_file, 'r') as file:
+                self.combined_errors_content += file.read()
         else:
-            self.bottom_result_output.setPlainText("Файл lexical_errors.txt не найден.")
+            self.combined_errors_content += "Файл lexical_errors.txt не найден.\n"
+
+        # Read and accumulate syntax errors
+        syn_errors_file = os.path.join(os.path.dirname(__file__), 'errors', 'syntax_errors.txt')
+        if os.path.exists(syn_errors_file):
+            with open(syn_errors_file, 'r') as file:
+                self.combined_errors_content += file.read() + "\n"
+        else:
+            self.combined_errors_content += "Файл syntax_errors.txt не найден.\n"
+
+        # Read and accumulate semantic errors
+        sem_errors_file = os.path.join(os.path.dirname(__file__), 'errors', 'semantic_errors.txt')
+        if os.path.exists(sem_errors_file):
+            with open(sem_errors_file, 'r') as file:
+                self.combined_errors_content += file.read() + "\n"
+        else:
+            self.combined_errors_content += "Файл semantic_errors.txt не найден.\n"
+
+        # Set the combined content to the output widget
+        self.bottom_result_output.setPlainText(self.combined_errors_content)
             
     def run_scanner(self):
         # Создание файла main.txt и сохранение текста из поля для ввода кода

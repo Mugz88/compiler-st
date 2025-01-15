@@ -2,6 +2,8 @@ import os
 from scanner import Scanner
 from scanner import SymbolTableManager
 
+script_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+script_dir = os.path.join(script_dir, "compiler-st")
 # Класс для представления токенов
 class Token:
     def __init__(self, type, value):
@@ -21,7 +23,8 @@ class Parser:
         self.current_token = None
         self.flag = False
         self.advance()
-
+        self.errors_file = os.path.join(script_dir, "errors", "syntax_errors.txt")
+        
     def advance(self):
         token = self.scanner.get_next_token()
         type = token[0]
@@ -33,6 +36,8 @@ class Parser:
         try:
             return self.program()
         except SyntaxError as e:
+            with open(self.errors_file, "w") as f:
+                f.write("Syntax Error: " + str(e))
             print(f"Syntax Error: {e}")
             return None
 
@@ -58,8 +63,12 @@ class Parser:
         elif self.current_token.type == 'KEYWORD' and self.current_token.value == 'for':
             return self.for_statement()
         elif self.current_token.type == 'KEYWORD' and self.current_token.value == 'end':
+            with open(self.errors_file, "w") as f:
+                f.write("No syntax error:)")
             print("End of program")
             self.flag = True
+        elif self.current_token.type == 'EOF':
+            raise SyntaxError("Not found end of program")
         else:
             raise SyntaxError(f"Unexpected token: {self.current_token}")
 
@@ -185,13 +194,17 @@ class SemanticAnalyzer:
     def __init__(self, ast):
         self.ast = ast
         self.symbol_table = {}
-
+        self.errors_file = os.path.join(script_dir, "errors", "semantic_errors.txt")
+        
     def analyze(self):
         try:
             for statement in self.ast:
                 self.visit(statement)
         except SemanticError as e:
+            with open(self.errors_file, "w") as f:
+                f.write("Semantic Error: " + str(e))
             print(f"Semantic Error: {e}")
+            return 1
 
     def visit(self, node):
         if node is None:
@@ -212,7 +225,12 @@ class SemanticAnalyzer:
         _, identifier, expression = node
         if identifier.value not in self.symbol_table:
             raise SemanticError(f"Identifier {identifier.value} not declared")
-        self.visit(expression)
+        
+        declared_type = self.symbol_table[identifier.value]
+        expr_type = self.visit(expression)  # Получаем тип выражения
+
+        if declared_type != expr_type:
+            raise SemanticError(f"Type mismatch: cannot assign {expr_type} to {declared_type}")
 
     def visit_write(self, node):
         _, expressions = node
@@ -245,23 +263,39 @@ class SemanticAnalyzer:
 
     def visit_binary_op(self, node):
         _, operator, left, right = node
-        self.visit(left)
-        self.visit(right)
+        left_type = self.visit(left)
+        right_type = self.visit(right)
+
+        # Пример проверки типов в бинарных операциях
+        if operator in ['plus', 'min', 'mult', 'div']:
+            if left_type != right_type:
+                raise SemanticError(f"Type mismatch in binary operation: {left_type} {operator} {right_type}")
+        return left_type  # Возвращаем тип результата операции
 
     def visit_unary_op(self, node):
         _, operator, operand = node
-        self.visit(operand)
+        operand_type = self.visit(operand)
+
+        # Пример проверки типа для унарных операций
+        if operator == '~' and operand_type != 'boolean':
+            raise SemanticError(f"Type mismatch: expected boolean for '~', got {operand_type}")
+        return operand_type
 
     def visit_identifier(self, node):
         _, value = node
         if value not in self.symbol_table:
             raise SemanticError(f"Identifier {value} not declared")
+        return self.symbol_table[value]
 
     def visit_number(self, node):
-        pass
+        _, value = node
+        # Вещественное число (например) будет типом "float", обычное - "int"
+        if 'E' in value or 'e' in value or '.' in value:
+            return 'real'
+        return 'integer'
 
     def visit_boolean(self, node):
-        pass
+        return 'boolean'
 
     def generic_visit(self, node):
         raise SemanticError(f"No visit_{node[0]} method")
@@ -272,17 +306,22 @@ def mainGrammar():
     scanner = Scanner(input_file_path)
     parser = Parser(scanner)
     ast = parser.parse()
+    sem_errors_file = os.path.join(script_dir, "errors", "semantic_errors.txt")
     if ast is not None:
         print("Abstract Syntax Tree (AST):")
         print(ast)
 
         semantic_analyzer = SemanticAnalyzer(ast)
-        semantic_analyzer.analyze()
-        print("Semantic analysis completed successfully.")
+        sem = semantic_analyzer.analyze()
+        if sem != 1:
+            with open(sem_errors_file, "w") as f:
+                f.write("No semantic error:)")
+            print("Semantic analysis completed successfully.")
     else:
         print("Parsing failed.")
     scanner.save_symbol_table()
     scanner.save_lexical_errors()
     scanner.save_tokens()
+    
 if __name__ == "__main__":
     mainGrammar()

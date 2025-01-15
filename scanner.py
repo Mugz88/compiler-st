@@ -132,7 +132,7 @@ token_dfa = (
     # Input character types
     #   w     d     l     *     =     s     {    \n     o    E      e       +        -    .            }                              всего 15 символов
     #   0     1     2     3     4     5     6     7     8    9      10      11      12      13         14
-    (   1,    2,    5,    7,    9,   12,   14,   19,   20,   5,     5,    23,    23,    23, 17), # State 0 (initial state)
+    (   1,    2,    5,    7,    9,   12,   14,   19,   20,   5,     5,    23,    23,    27,    17), # State 0 (initial state)
     (   1, None, None, None, None, None, None,    1, None, None, None,  None,  None,  None,  None), # State 1 (whitespace)
     (   3,    2,   24,    3,    3,    3,    3,    3,    4,   24,    24,    4,     4,    27,4), # State 2 
     (None, None, None, None, None, None, None, None, None, None, None, None, None, None, None), # State 3 (number)

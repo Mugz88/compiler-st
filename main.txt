@@ -1,15 +1,19 @@
-dim x : integer
+dim x : real
 dim y : integer
 dim z : integer
-dim i: integer
-x as 5
+
+x as 5.1
 y as 10
-z as (x plus y) mult (x min y) div 2
-
-write (z)
-
-for i as 0 
-to i LT 10 
-do i as i plus 1
+10 plus 1.6
 
 end
+
+
+
+
+
+
+
+
+
+
