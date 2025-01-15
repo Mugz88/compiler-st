@@ -134,18 +134,18 @@ state_to_error_message = {
 
 token_dfa = (
     # Input character types
-    #   w     d     l     *     =     s     #    \n     o    E      e       +        -    .                                 всего 14 символов
-    #   0     1     2     3     4     5     6     7     8    9      10      11      12      13
-    (   1,    2,    5,    7,    9,   12,   14,   19,   20,   5,     5,      23 ,     23, 27 ), # State 0 (initial state)
-    (   1, None, None, None, None, None, None,    1, None, None, None,  None,  None,  None), # State 1 (whitespace)
-    (   3,    2,    24,    3,    3,    3,    3,    3, 4,   24, 24, 4,  4,27), # State 2 
+    #   w     d     l     *     =     s     #    \n     o    E      e     +     -    .                                 всего 14 символов
+    #   0     1     2     3     4     5     6     7     8    9      10    11    12    13
+    (   1,    2,    5,    7,    9,   12,   14,   19,   20,   5,     5,   23,   23,   27), # State 0 (initial state)
+    (   1, None, None, None, None, None, None,    1, None, None, None, None, None, None), # State 1 (whitespace)
+    (   3,    2,   24,    3,    3,    3,    3,    3,    4,   24,   24,    4,    4,   27), # State 2 
     (None, None, None, None, None, None, None, None, None, None, None, None, None, None), # State 3 (number)
     (None, None, None, None, None, None, None, None, None, None, None, None, None, None), # State 4 (illegal number)
-    (   6,    5,    5,    6,    6,    6,    6,    6,   20,   5,  5, 20, 20,20), # State 5 
+    (   6,    5,    5,    6,    6,    6,    6,    6,   20,    5,    5,   20,   20,   20), # State 5 
     (None, None, None, None, None, None, None, None, None, None, None, None, None, None), # State 6 (id or keyword)
-    (  21,   21,   21,   21,   21,   21,    8,   21,   20), # State 7 хз что это
+    (  21,   21,   21,   21,   21,   21,    8,   21,  20), # State 7 хз что это
     (None, None, None, None, None, None, None, None, None, None, None, None, None, None), # State 8 (unmatched */)
-    (  11,   11,   11,   11,   10,   11,   11,   11,   20), # State 9 хз 
+    (  11,   11,   11,   11,   10,   11,   11,   11,  20), # State 9 хз 
     (None, None, None, None, None, None, None, None, None, None, None, None, None, None), # State 10 (symbol ==)
     (None, None, None, None, None, None, None, None, None, None, None, None, None, None), # State 11 (symbol =)
     (None, None, None, None, None, None, None, None, None, None, None, None, None, None), # State 12 (symbol)
@@ -160,14 +160,14 @@ token_dfa = (
     (None, None, None, None, None, None, None, None, None, None, None, None, None, None), # State 21 (symbol *)
     (None, None, None, None, None, None, None, None, None, None, None, None, None, None), # State 22 (invalid comment)
     (None, None, None, None, None, None, None, None, None, None, None, None, None, None), # State 23 RAZD
-    (31, 2, 29, 4, 4, 4, 4, 31, 4, 4, 4, 25, 25,4), # State 24 NUM exp part
-    (4, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,4), # State 25 NUM exp 
-    (   3,    26,    4,    3,    3,    3,    3,    3,    4,  4, 4, 4,  4,4), # State 26 number exp 
-    (   4,    28,    4,    3,    3,    3,    3,    3,    4,  4, 4, 4,  4,4), # State 27 number with .
-    (   3,    28,    24,    3,    3,    3,    3,    3,    24,  24, 4, 4,  4,4), # State 28 number with .  end .
-    (   31,    30,    29,    31,    31,    31,    31,    31,    29,  29, 4, 4,  4,4), # State 29 number HEx
-    (   4,    30,    29,    4,    4,   4,    4,    4,    29,  29, 4, 4,  4,4), # State 30 number end dig
-    ( None, None, None, None, None, None, None, None, None, None, None, None, None, None), # State 31 Nbodh
+    (  31,    2,   29,    4,    4,    4,    4,   31,    4,    4,    4,   25,   25,    4), # State 24 NUM exp part
+    (   4,    2,    4,    4,    4,    4,    4,    4,    4,    4,    4,    4,    4,    4), # State 25 NUM exp 
+    (   3,   26,    4,    3,    3,    3,    3,    3,    4,    4,    4,    4,    4,    4), # State 26 number exp 
+    (   4,   28,    4,    3,    3,    3,    3,    3,    4,    4,    4,    4,    4,    4), # State 27 number with .
+    (   3,   28,   24,    3,    3,    3,    3,    3,   24,   24,    4,    4,    4,    4), # State 28 number with .  end .
+    (  31,   30,   29,   31,   31,   31,   31,   31,   29,   29,    4,    4,    4,    4), # State 29 number HEx
+    (   4,   30,   29,    4,    4,    4,    4,    4,   29,   29,    4,    4,    4,    4), # State 30 number end dig
+    (None, None, None, None, None, None, None, None, None, None, None, None, None, None), # State 31 Nbodh
 
 
 )
@@ -426,7 +426,7 @@ class Scanner(object):
                         save_state = next_s
                     input_ended = True
                     break
-                print(s)       
+                #print(s)       
                 s = next_s
 
             if error_occurred or input_ended:

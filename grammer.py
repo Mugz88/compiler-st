@@ -4,6 +4,7 @@ from scanner import SymbolTableManager
 
 script_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 script_dir = os.path.join(script_dir, "compiler-st")
+
 # Класс для представления токенов
 class Token:
     def __init__(self, type, value):
@@ -12,7 +13,7 @@ class Token:
 
     def __repr__(self):
         return f"({self.type}, {self.value})"
-    
+
 class SemanticError(Exception):
     pass
 
@@ -24,7 +25,7 @@ class Parser:
         self.flag = False
         self.advance()
         self.errors_file = os.path.join(script_dir, "errors", "syntax_errors.txt")
-        
+
     def advance(self):
         token = self.scanner.get_next_token()
         type = token[0]
@@ -42,13 +43,18 @@ class Parser:
             return None
 
     def program(self):
+        self.match('KEYWORD', 'begin')
         statements = []
         while self.current_token and self.flag is False:
+            
             statements.append(self.statement())
+            if self.current_token and self.current_token.type == 'RAZD' and self.current_token.value == ';':
+                self.match('RAZD', ';')
+        self.match('KEYWORD', 'end')
         return statements
 
     def statement(self):
-        if self.current_token.type == 'KEYWORD' and self.current_token.value == 'dim':
+        if self.current_token.type == 'KEYWORD' and self.current_token.value == 'var':
             return self.declaration()
         elif self.current_token.type == 'ID':
             return self.assignment()
@@ -73,7 +79,7 @@ class Parser:
             raise SyntaxError(f"Unexpected token: {self.current_token}")
 
     def declaration(self):
-        self.match('KEYWORD', 'dim')
+        self.match('KEYWORD', 'var')
         identifiers = [self.match('ID')]
         while self.current_token and self.current_token.type == 'RAZD' and self.current_token.value == ',':
             self.match('RAZD', ',')
@@ -97,7 +103,7 @@ class Parser:
             expressions.append(self.expression())
         self.match('RAZD', ')')
         return ('write', expressions)
-    
+
     def read_statement(self):
         self.match('KEYWORD', 'read')
         self.match('RAZD', '(')
@@ -134,10 +140,10 @@ class Parser:
         self.match('KEYWORD', 'do')
         body = self.statement()
         return ('for', initialization, condition, body)
-    
+
     def expression(self):
         operand = self.operand()
-        while self.current_token and self.current_token.type == 'RAZD' and self.current_token.value in ['NE', 'EQ', 'LT', 'LE', 'GT', 'GE']:
+        while self.current_token and self.current_token.type == 'RAZD' and self.current_token.value in ['NEQ', 'EQV', 'LOWT', 'LOWE', 'GRT', 'GRE']:
             operator = self.match('RAZD')
             right_operand = self.operand()
             operand = ('binary_op', operator, operand, right_operand)
@@ -145,7 +151,7 @@ class Parser:
 
     def operand(self):
         term = self.term()
-        while self.current_token and self.current_token.type == 'RAZD' and self.current_token.value in ['plus', 'min', 'or']:
+        while self.current_token and self.current_token.type == 'RAZD' and self.current_token.value in ['add', 'disa', '||']:
             operator = self.match('RAZD')
             right_term = self.term()
             term = ('binary_op', operator, term, right_term)
@@ -153,7 +159,7 @@ class Parser:
 
     def term(self):
         factor = self.factor()
-        while self.current_token and self.current_token.type == 'RAZD' and self.current_token.value in ['mult', 'div', 'and']:
+        while self.current_token and self.current_token.type == 'RAZD' and self.current_token.value in ['umn', 'del', '&&']:
             operator = self.match('RAZD')
             right_factor = self.factor()
             factor = ('binary_op', operator, factor, right_factor)
@@ -170,10 +176,10 @@ class Parser:
         elif token.type == 'KEYWORD' and token.value in ['true', 'false']:
             self.advance()
             return ('boolean', token.value)
-        elif token.type == 'RAZD' and token.value == '~':
+        elif token.type == 'RAZD' and token.value == '^':
             self.advance()
             factor = self.factor()
-            return ('unary_op', '~', factor)
+            return ('unary_op', '^', factor)
         elif token.type == 'RAZD' and token.value == '(':
             self.advance()
             expr = self.expression()
@@ -195,7 +201,7 @@ class SemanticAnalyzer:
         self.ast = ast
         self.symbol_table = {}
         self.errors_file = os.path.join(script_dir, "errors", "semantic_errors.txt")
-        
+
     def analyze(self):
         try:
             for statement in self.ast:
@@ -225,7 +231,7 @@ class SemanticAnalyzer:
         _, identifier, expression = node
         if identifier.value not in self.symbol_table:
             raise SemanticError(f"Identifier {identifier.value} not declared")
-        
+
         declared_type = self.symbol_table[identifier.value]
         expr_type = self.visit(expression)  # Получаем тип выражения
 
@@ -267,7 +273,7 @@ class SemanticAnalyzer:
         right_type = self.visit(right)
 
         # Пример проверки типов в бинарных операциях
-        if operator in ['plus', 'min', 'mult', 'div']:
+        if operator in ['add', 'disa', '||', 'umn', 'del', '&&']:
             if left_type != right_type:
                 raise SemanticError(f"Type mismatch in binary operation: {left_type} {operator} {right_type}")
         return left_type  # Возвращаем тип результата операции
@@ -277,8 +283,8 @@ class SemanticAnalyzer:
         operand_type = self.visit(operand)
 
         # Пример проверки типа для унарных операций
-        if operator == '~' and operand_type != 'boolean':
-            raise SemanticError(f"Type mismatch: expected boolean for '~', got {operand_type}")
+        if operator == '^' and operand_type != 'boolean':
+            raise SemanticError(f"Type mismatch: expected boolean for '^', got {operand_type}")
         return operand_type
 
     def visit_identifier(self, node):
@@ -291,8 +297,8 @@ class SemanticAnalyzer:
         _, value = node
         # Вещественное число (например) будет типом "float", обычное - "int"
         if 'E' in value or 'e' in value or '.' in value:
-            return 'real'
-        return 'integer'
+            return '@'
+        return '!'
 
     def visit_boolean(self, node):
         return 'boolean'
@@ -322,6 +328,6 @@ def mainGrammar():
     scanner.save_symbol_table()
     scanner.save_lexical_errors()
     scanner.save_tokens()
-    
+
 if __name__ == "__main__":
     mainGrammar()

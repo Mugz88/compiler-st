@@ -1,1 +1,5 @@
-1.	(NUM, 100101B)
+3.	(KEYWORD, begin)
+4.	(KEYWORD, var) (ID, x) (RAZD, :) (KEYWORD, !) (RAZD, ;)
+5.	(ID, x) (RAZD, as) (NUM, 5) (RAZD, ;)
+6.	(KEYWORD, write) (RAZD, () (NUM, 5) (RAZD, )) (RAZD, ;)
+7.	(KEYWORD, end)
