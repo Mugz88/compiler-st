@@ -266,7 +266,7 @@ class SemanticAnalyzer:
     def generic_visit(self, node):
         raise SemanticError(f"No visit_{node[0]} method")
 
-def main():
+def mainGrammar():
     input_file_path = os.path.join(os.path.dirname(__file__), 'main.txt')
     SymbolTableManager.init()
     scanner = Scanner(input_file_path)
@@ -281,6 +281,8 @@ def main():
         print("Semantic analysis completed successfully.")
     else:
         print("Parsing failed.")
-
+    scanner.save_symbol_table()
+    scanner.save_lexical_errors()
+    scanner.save_tokens()
 if __name__ == "__main__":
-    main()
+    mainGrammar()

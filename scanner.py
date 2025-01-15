@@ -437,7 +437,7 @@ class Scanner(object):
 
                 if token == "NUM":
                     # Разрешаем цифры, символы '+' и '-', а также 'e' или 'E', но не другие буквы или символы
-                    if re.search(r'[^0-9eE\+\-]', lexim):  
+                    if re.search(r'[^0-9eE\+\-\.]', lexim):  
                         SymbolTableManager.error_flag = True
                         self._lexical_errors.append((self.line_number, lexim, "e number without e"))
                         

@@ -5,6 +5,7 @@ from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHB
 from PyQt6.QtGui import QAction
 from compiler import compile
 from scanner import SymbolTableManager, mainScanner
+from grammer import mainGrammar
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -132,9 +133,24 @@ class MainWindow(QMainWindow):
             file.write(code)
 
         # Запуск функции compile с путем к файлу main.txt
-        result = compile(source_file)
+        result = mainGrammar()
         self.result_output.setPlainText(result)
+        tokens_file = os.path.join(os.path.dirname(__file__), 'output', 'tokens.txt')
+        if os.path.exists(tokens_file):
+            with open(tokens_file, 'r') as file:
+                tokens_content = file.read()
+            self.result_output.setPlainText(tokens_content)
+        else:
+            self.result_output.setPlainText("Файл tokens.txt не найден.")
 
+        lex_erorrs_file = os.path.join(os.path.dirname(__file__), 'errors', 'lexical_errors.txt')
+        if os.path.exists(lex_erorrs_file):
+            with open(lex_erorrs_file, 'r') as file:
+                erorrs_content = file.read()
+            self.bottom_result_output.setPlainText(erorrs_content)
+        else:
+            self.bottom_result_output.setPlainText("Файл lexical_errors.txt не найден.")
+            
     def run_scanner(self):
         # Создание файла main.txt и сохранение текста из поля для ввода кода
         code = self.code_input.toPlainText()
