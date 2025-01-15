@@ -10,6 +10,9 @@ class Token:
 
     def __repr__(self):
         return f"({self.type}, {self.value})"
+    
+class SemanticError(Exception):
+    pass
 
 # Грамматический анализатор
 class Parser:
@@ -167,8 +170,6 @@ class Parser:
             expr = self.expression()
             self.match('RAZD', ')')
             return expr
-        elif self.current_token.type == 'EOF':
-            print("EOF reached")
         else:
             raise SyntaxError(f"Unexpected token: {token}")
 
@@ -180,65 +181,87 @@ class Parser:
         else:
             raise SyntaxError(f"Expected {type} {value}, but got {self.current_token}")
 
-# Семантический анализатор
-#class SemanticAnalyzer:
-   # def __init__(self, ast):
-    #    self.ast = ast
-     #   self.symbol_table = {}
-#
- #   def analyze(self):
-  #      try:
-   #         for statement in self.ast:
-    #            self.visit(statement)
-     #   except SemanticError as e:
-      #      print(f"Semantic Error: {e}")
-#
- #   def visit(self, node):
-  #      method_name = 'visit_' + node[0]
-   #     visitor = getattr(self, method_name, self.generic_visit)
-    #    return visitor(node)
-#
- #   def visit_declaration(self, node):
-  #      _, identifiers, type_ = node
-   #     for identifier in identifiers:
-    #        if identifier.value in self.symbol_table:
-     #           raise SemanticError(f"Identifier {identifier.value} already declared")
-      #      self.symbol_table[identifier.value] = type_.value
+class SemanticAnalyzer:
+    def __init__(self, ast):
+        self.ast = ast
+        self.symbol_table = {}
 
-    #def visit_assignment(self, node):
-     #   _, identifier, expression = node
-      #  if identifier.value not in self.symbol_table:
-       #     raise SemanticError(f"Identifier {identifier.value} not declared")
-        #self.visit(expression)
+    def analyze(self):
+        try:
+            for statement in self.ast:
+                self.visit(statement)
+        except SemanticError as e:
+            print(f"Semantic Error: {e}")
 
-    #def visit_write(self, node):
-     #   _, expressions = node
-      #  for expression in expressions:
-       #     self.visit(expression)
+    def visit(self, node):
+        method_name = 'visit_' + node[0]
+        visitor = getattr(self, method_name, self.generic_visit)
+        return visitor(node)
 
-#    def visit_binary_op(self, node):
- #       _, operator, left, right = node
-  #      self.visit(left)
-   #     self.visit(right)
+    def visit_declaration(self, node):
+        _, identifiers, type_ = node
+        for identifier in identifiers:
+            if identifier.value in self.symbol_table:
+                raise SemanticError(f"Identifier {identifier.value} already declared")
+            self.symbol_table[identifier.value] = type_.value
 
-    #def visit_unary_op(self, node):
-     #   _, operator, operand = node
-      #  self.visit(operand)
+    def visit_assignment(self, node):
+        _, identifier, expression = node
+        if identifier.value not in self.symbol_table:
+            raise SemanticError(f"Identifier {identifier.value} not declared")
+        self.visit(expression)
 
-    #def visit_identifier(self, node):
-     #   _, value = node
-      #  if value not in self.symbol_table:
-       #     raise SemanticError(f"Identifier {value} not declared")
+    def visit_write(self, node):
+        _, expressions = node
+        for expression in expressions:
+            self.visit(expression)
 
-    #def visit_number(self, node):
-     #   pass
+    def visit_read(self, node):
+        _, identifiers = node
+        for identifier in identifiers:
+            if identifier.value not in self.symbol_table:
+                raise SemanticError(f"Identifier {identifier.value} not declared")
 
-    #def visit_boolean(self, node):
-     #   pass
+    def visit_if(self, node):
+        _, condition, then_branch, else_branch = node
+        self.visit(condition)
+        self.visit(then_branch)
+        if else_branch:
+            self.visit(else_branch)
 
-    #def generic_visit(self, node):
-     #   raise SemanticError(f"No visit_{node[0]} method")
+    def visit_while(self, node):
+        _, condition, body = node
+        self.visit(condition)
+        self.visit(body)
 
+    def visit_for(self, node):
+        _, initialization, condition, body = node
+        self.visit(initialization)
+        self.visit(condition)
+        self.visit(body)
+
+    def visit_binary_op(self, node):
+        _, operator, left, right = node
+        self.visit(left)
+        self.visit(right)
+
+    def visit_unary_op(self, node):
+        _, operator, operand = node
+        self.visit(operand)
+
+    def visit_identifier(self, node):
+        _, value = node
+        if value not in self.symbol_table:
+            raise SemanticError(f"Identifier {value} not declared")
+
+    def visit_number(self, node):
+        pass
+
+    def visit_boolean(self, node):
+        pass
+
+    def generic_visit(self, node):
+        raise SemanticError(f"No visit_{node[0]} method")
 # Основная функция для выполнения анализа
 def main():
     input_file_path = os.path.join(os.path.dirname(__file__), 'main.txt')
