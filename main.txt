@@ -1,19 +1,16 @@
-dim x : real
+dim x : integer
 dim y : integer
 dim z : integer
 
-x as 5.1
+x as 565555
 y as 10
-10 plus 1.6
+z as (x plus y) mult (x min y) div 2
+
+write (z)
+
+for i as 0 
+to i LT 10 
+do i as i plus 1
 
 end
-
-
-
-
-
-
-
-
-
 

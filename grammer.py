@@ -29,7 +29,7 @@ class Parser:
         token = self.scanner.get_next_token()
         type = token[0]
         value = token[1]
-        print(f"Current token: {type} {value}")
+        #print(f"Current token: {type} {value}")
         self.current_token = Token(type, value)
 
     def parse(self):
@@ -211,7 +211,7 @@ class SemanticAnalyzer:
             return
         method_name = 'visit_' + node[0]
         visitor = getattr(self, method_name, self.generic_visit)
-        print(f"Visiting {node}")
+        #print(f"Visiting {node}")
         return visitor(node)
 
     def visit_declaration(self, node):
@@ -305,6 +305,7 @@ def mainGrammar():
     SymbolTableManager.init()
     scanner = Scanner(input_file_path)
     parser = Parser(scanner)
+    
     ast = parser.parse()
     sem_errors_file = os.path.join(script_dir, "errors", "semantic_errors.txt")
     if ast is not None:
@@ -319,9 +320,12 @@ def mainGrammar():
             print("Semantic analysis completed successfully.")
     else:
         print("Parsing failed.")
+    print()
     scanner.save_symbol_table()
     scanner.save_lexical_errors()
     scanner.save_tokens()
+    nums, ind = scanner.data()
     
+    return nums, ind
 if __name__ == "__main__":
     mainGrammar()

@@ -132,9 +132,9 @@ token_dfa = (
     # Input character types
     #   w     d     l     *     =     s     {    \n     o    E      e       +        -    .            }                              всего 15 символов
     #   0     1     2     3     4     5     6     7     8    9      10      11      12      13         14
-    (   1,    2,    5,    7,    9,   12,   14,   19,   20,   5,     5,    23,    23,    27,    17), # State 0 (initial state)
-    (   1, None, None, None, None, None, None,    1, None, None, None,  None,  None,  None,  None), # State 1 (whitespace)
-    (   3,    2,   24,    3,    3,    3,    3,    3,    4,   24,    24,    4,     4,    27,4), # State 2 
+    (   1,    2,    5,    7,    9,   12,   14,   19,   20,   5,     5,   23,   23,   27,   17), # State 0 (initial state)
+    (   1, None, None, None, None, None, None,    1, None, None, None, None, None, None, None), # State 1 (whitespace)
+    (   3,    2,   24,    3,    3,    3,    3,    3,    4,   24,   24,    4,    4,   27,    4), # State 2 
     (None, None, None, None, None, None, None, None, None, None, None, None, None, None, None), # State 3 (number)
     (None, None, None, None, None, None, None, None, None, None, None, None, None, None, None), # State 4 (illegal number)
     (   6,    5,    5,    6,    6,    6,    6,    6,   20,   5,  5, 20, 20,20,20), # State 5 
@@ -149,21 +149,21 @@ token_dfa = (
     (  14,   14,   14,   14,   14,   14,   14,   14,   14,   14,   14,   14,   14,   14,   16), # State 14            сюда бы дописать столбцы если что
     (  14,   14,   14,   15,   14,   14,   16,   14,   14,   14,   14,   14,   14,   14,   14), # State 15
     (None, None, None, None, None, None, None, None, None, None, None, None, None, None, None), # State 16 (/* comment */)
-    (  17,   17,   17,   17,   17,   17,   17,   18,   17,   17,   17,   17,   17,   17), # State 17 
+    (  17,   17,   17,   17,   17,   17,   17,   18,   17,   17,   17,   17,   17,  17), # State 17 
     (None, None, None, None, None, None, None, None, None, None, None, None, None, None, None), # State 18 (// comment\n)
     (  19, None, None, None, None, None, None,   19, None, None, None, None, None, None, None), # State 19 (newline + whitespace)
     (None, None, None, None, None, None, None, None, None, None, None, None, None, None, None), # State 20 (invalid input)
     (None, None, None, None, None, None, None, None, None, None, None, None, None, None, None), # State 21 (symbol *)
     (None, None, None, None, None, None, None, None, None, None, None, None, None, None, None), # State 22 (invalid comment)
     (None, None, None, None, None, None, None, None, None, None, None, None, None, None, None), # State 23 RAZD
-    (  31,    2,   29,    4,    4,    4,    4,    31,    4,    4,    4,   25,   25,    4,    4), # State 24 NUM exp part
+    (  31,    2,   29,    4,    4,    4,    4,   31,    4,    4,    4,   25,   25,    4,    4), # State 24 NUM exp part
     (   4,    2,    4,    4,    4,    4,    4,    4,    4,    4,    4,   24,    4,    4,    4), # State 25 NUM exp 
-    (   3,    26,   4,    3,    3,    3,    3,    3,    4,    4,    4,    4,    4,    4,    4), # State 26 number exp 
-    (   4,    28,   4,    3,    3,    3,    3,    3,    4,    4,    4,    4,    4,    4,    4), # State 27 number with .
-    (   3,    28,  24,    3,    3,    3,    3,    3,    24,  24,    4,    4,    4,    4,    4), # State 28 number with .  end .
-    (  31,    30,  29,   31,   31,   31,   31,   31,   29,  29,    4,    4,    4,    4,    4), # State 29 number HEx
-    (   4,    30,  29,    4,    4,    4,    4,    4,    29,  29, 4, 4,  4,4,4), # State 30 number end dig
-    ( None, None, None, None, None, None, None, None, None, None, None, None, None, None, None), # State 31 Nbodh
+    (   3,   26,    4,    3,    3,    3,    3,    3,    4,    4,    4,    4,    4,    4,    4), # State 26 number exp 
+    (   4,   28,    4,    3,    3,    3,    3,    3,    4,    4,    4,    4,    4,    4,    4), # State 27 number with .
+    (   3,   28,   24,    3,    3,    3,    3,    3,   24,   24,    4,    4,    4,    4,    4), # State 28 number with .  end .
+    (  31,   30,   29,   31,   31,   31,   31,   31,   29,   29,    4,    4,    4,    4,    4), # State 29 number HEx
+    (   4,   30,   29,    4,    4,    4,    4,    4,   29,   29,    4,    4,    4,    4,    4), # State 30 number end dig
+    (None, None, None, None, None, None, None, None, None, None, None, None, None, None, None), # State 31 Nbodh
 
 )
 
@@ -190,7 +190,8 @@ class Scanner(object):
         self.tokens = {} # доступ к токенам по номеру строки
         self.tokens[self.line_number] = []
         self.max_state_size = max_state_size # сколько строк токенов мы хотим держать в памяти (по умолчанию: неограниченно)
-
+        self.ind = []
+        self.nums = []
         self.tokens_file = os.path.join(script_dir, "output", "tokens.txt")
         self.symbol_file = os.path.join(script_dir, "output", "symbol_table.txt")
 
@@ -259,7 +260,10 @@ class Scanner(object):
         ]
         self.identifiers = keywords
         self.keywords = set(keywords)
-
+        
+    def data(self):
+        return self.nums, self.ind
+    
     @property
     def lexical_errors(self):
         ''' Возвращает строку с лексическими ошибками '''
@@ -345,7 +349,7 @@ class Scanner(object):
         if symbol_id == len(SymbolTableManager.symbol_table):
             SymbolTableManager.insert(lexim)
         return symbol_id
-
+    
     def get_next_token(self):
         save_state = None
         error_occurred = False
@@ -436,6 +440,7 @@ class Scanner(object):
                     continue  # переходим к следующему токену
 
                 if token == "NUM":
+                    self.nums.append(lexim)
                     # Разрешаем цифры, символы '+' и '-', а также 'e' или 'E', но не другие буквы или символы
                     if re.search(r'[^0-9eE\+\-\.]', lexim):  
                         SymbolTableManager.error_flag = True
@@ -494,20 +499,19 @@ class Scanner(object):
 
                 if token == "ID":  
                     token = "RAZD" if lexim in self.razd else "ID"
-
+                    
                 if self.max_state_size > 0:
                     self.tokens[self.line_number].append((token, lexim))  # сохраняем токены для последующей печати
 
                 if token == "ID":
                     if lexim not in self.identifiers:
                         self.identifiers.append(lexim)
+                        self.ind.append(lexim)
                     lexim = self.update_symbol_table(lexim)
-
                 return (token, lexim)
             else:
                 print(f"[Panic Mode] Dropping '{self.input[:1]}' from input!")
                 self.input = self.input[1:]  # сбрасываем некорректный символ в случае ошибки
-
 
 def mainScanner(input_path):
     ''' Основная функция для запуска сканера '''
@@ -523,6 +527,7 @@ def mainScanner(input_path):
     scanner.save_lexical_errors()
     scanner.save_tokens()
 
+    
 if __name__ == "__main__":
     SymbolTableManager.init()
     input_path = os.path.join(script_dir, "input/input_simple.c")
