@@ -5,6 +5,7 @@ from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHB
 from PyQt6.QtGui import QAction
 from compiler import compile
 from scanner import SymbolTableManager, mainScanner
+from grammer import mainGrammar
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -132,8 +133,43 @@ class MainWindow(QMainWindow):
             file.write(code)
 
         # Запуск функции compile с путем к файлу main.txt
-        result = compile(source_file)
+        result = mainGrammar()
         self.result_output.setPlainText(result)
+        tokens_file = os.path.join(os.path.dirname(__file__), 'output', 'tokens.txt')
+        if os.path.exists(tokens_file):
+            with open(tokens_file, 'r') as file:
+                tokens_content = file.read()
+            self.result_output.setPlainText(tokens_content)
+        else:
+            self.result_output.setPlainText("Файл tokens.txt не найден.")
+
+        self.combined_errors_content = ""   
+        
+        lex_errors_file = os.path.join(os.path.dirname(__file__), 'errors', 'lexical_errors.txt')
+        if os.path.exists(lex_errors_file):
+            with open(lex_errors_file, 'r') as file:
+                self.combined_errors_content += file.read()
+        else:
+            self.combined_errors_content += "Файл lexical_errors.txt не найден.\n"
+
+        # Read and accumulate syntax errors
+        syn_errors_file = os.path.join(os.path.dirname(__file__), 'errors', 'syntax_errors.txt')
+        if os.path.exists(syn_errors_file):
+            with open(syn_errors_file, 'r') as file:
+                self.combined_errors_content += file.read() + "\n"
+        else:
+            self.combined_errors_content += "Файл syntax_errors.txt не найден.\n"
+
+        # Read and accumulate semantic errors
+        sem_errors_file = os.path.join(os.path.dirname(__file__), 'errors', 'semantic_errors.txt')
+        if os.path.exists(sem_errors_file):
+            with open(sem_errors_file, 'r') as file:
+                self.combined_errors_content += file.read() + "\n"
+        else:
+            self.combined_errors_content += "Файл semantic_errors.txt не найден.\n"
+
+        # Set the combined content to the output widget
+        self.bottom_result_output.setPlainText(self.combined_errors_content)
 
     def run_scanner(self):
         # Создание файла main.txt и сохранение текста из поля для ввода кода

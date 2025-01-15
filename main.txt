@@ -4,4 +4,4 @@ begin
 var x : !;
 x as 5;
 write ( 5 );
-end
+end 
