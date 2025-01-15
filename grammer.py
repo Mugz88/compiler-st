@@ -328,6 +328,7 @@ def mainGrammar():
     scanner.save_symbol_table()
     scanner.save_lexical_errors()
     scanner.save_tokens()
-
+    nums, ind = scanner.data()
+    return nums, ind
 if __name__ == "__main__":
     mainGrammar()

@@ -133,8 +133,8 @@ class MainWindow(QMainWindow):
             file.write(code)
 
         # Запуск функции compile с путем к файлу main.txt
-        result = mainGrammar()
-        self.result_output.setPlainText(result)
+        nums, ids = mainGrammar()
+        #self.result_output.setPlainText(result)
         tokens_file = os.path.join(os.path.dirname(__file__), 'output', 'tokens.txt')
         if os.path.exists(tokens_file):
             with open(tokens_file, 'r') as file:
@@ -171,6 +171,9 @@ class MainWindow(QMainWindow):
         # Set the combined content to the output widget
         self.bottom_result_output.setPlainText(self.combined_errors_content)
 
+        self.fill_table(self.tables[3], ids)  # Идентификаторы
+        self.fill_table(self.tables[2], nums)  # Числа
+        
     def run_scanner(self):
         # Создание файла main.txt и сохранение текста из поля для ввода кода
         code = self.code_input.toPlainText()
@@ -197,6 +200,12 @@ class MainWindow(QMainWindow):
             self.bottom_result_output.setPlainText(errors_content)
         else:
             self.bottom_result_output.setPlainText("Файл lexical_errors.txt не найден.")
+    
+    def fill_table(self, table, values):
+        table.clearContents()
+        for i, value in enumerate(values):
+            table.setItem(i, 0, QTableWidgetItem(value))
+            
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

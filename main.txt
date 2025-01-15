@@ -4,4 +4,9 @@ begin
 var x : !;
 x as 5;
 write ( 5 );
-end 
+0101010e-23.4545
+
+
+
+
+end

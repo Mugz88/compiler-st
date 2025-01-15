@@ -206,7 +206,10 @@ class Scanner(object):
         self.max_unclosed_comment_size = 15
         self.input = ""
         self.read_input()
-
+        
+        self.ind = []
+        self.nums = []
+        
         # лексическая спецификация
         self._symbols = {',', ';', ':', '(', ')', '{', '}','^','@','&','|','!'} # = и * исключены
         self.letters = {chr(i) for i in range(65, 91)} | {chr(i) for i in range(97, 123)}
@@ -443,6 +446,7 @@ class Scanner(object):
                     continue  # переходим к следующему токену
 
                 if token == "NUM":
+                    self.nums.append(lexim)
                     # Разрешаем цифры, символы '+' и '-', а также 'e' или 'E', но не другие буквы или символы
                     if re.search(r'[^0-9eE\+\-\.]', lexim):  
                         SymbolTableManager.error_flag = True
@@ -460,6 +464,7 @@ class Scanner(object):
                             continue  # Пропускаем токен и продолжаем 
                         else:
                             token = "NUM"
+                            self.nums.append(lexim)
                             
 
                 if token == "Nbodh":   
@@ -471,6 +476,7 @@ class Scanner(object):
                             continue  # Пропускаем токен и продолжаем 
                         else:
                             token = "NUM"
+                            self.nums.append(lexim)
 
                 if token == "Nbodh":  
                     if lexim[-2] == 'D' or lexim[-2] == 'd':
@@ -481,6 +487,7 @@ class Scanner(object):
                             continue  # Пропускаем токен и продолжаем 
                         else:
                             token = "NUM"
+                            self.nums.append(lexim)
 
                 if token == "Nbodh":  
                     if lexim[-2] == 'H' or lexim[-2] == 'h':
@@ -491,6 +498,7 @@ class Scanner(object):
                             continue  # Пропускаем токен и продолжаем 
                         else:
                             token = "NUM"
+                            self.nums.append(lexim)
                       
 
                 if lexim == "&":  # если символ — это одиночный &
@@ -532,6 +540,7 @@ class Scanner(object):
                 if token == "ID":
                     if lexim not in self.identifiers:
                         self.identifiers.append(lexim)
+                        self.ind.append(lexim)
                     lexim = self.update_symbol_table(lexim)
 
                 return (token, lexim)
@@ -539,7 +548,9 @@ class Scanner(object):
                 print(f"[Panic Mode] Dropping '{self.input[:1]}' from input!")
                 self.input = self.input[1:]  # сбрасываем некорректный символ в случае ошибки
 
-
+    def data(self):
+        return self.nums, self.ind
+    
 def mainScanner(input_path):
     ''' Основная функция для запуска сканера '''
     import time
