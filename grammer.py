@@ -194,8 +194,11 @@ class SemanticAnalyzer:
             print(f"Semantic Error: {e}")
 
     def visit(self, node):
+        if node is None:
+            return
         method_name = 'visit_' + node[0]
         visitor = getattr(self, method_name, self.generic_visit)
+        print(f"Visiting {node}")
         return visitor(node)
 
     def visit_declaration(self, node):
@@ -262,7 +265,7 @@ class SemanticAnalyzer:
 
     def generic_visit(self, node):
         raise SemanticError(f"No visit_{node[0]} method")
-# Основная функция для выполнения анализа
+
 def main():
     input_file_path = os.path.join(os.path.dirname(__file__), 'main.txt')
     SymbolTableManager.init()
@@ -273,8 +276,8 @@ def main():
         print("Abstract Syntax Tree (AST):")
         print(ast)
 
-        #semantic_analyzer = SemanticAnalyzer(ast)
-       # semantic_analyzer.analyze()
+        semantic_analyzer = SemanticAnalyzer(ast)
+        semantic_analyzer.analyze()
         print("Semantic analysis completed successfully.")
     else:
         print("Parsing failed.")
