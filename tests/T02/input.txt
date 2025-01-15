@@ -7,3 +7,9 @@ y as 10
 z as (x plus y) mult (x min y) div 2
 
 write (z)
+
+for i as 0 
+to i LT 10 
+do i as i plus 1
+
+end
