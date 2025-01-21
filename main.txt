@@ -1,12 +1,11 @@
- # 1212
-#
 begin
 var x : !;
 x as 5;
-write ( 5 );
-0101010e-23.4545
 
-
+if x LOWT 4
+then x as x add 4
+else x as x disa 4
 
 
 end
+

@@ -1,33 +1,14 @@
-int cou;
-int result[50];
+begin
+var x : !;
+x as 5;
+
+if x LOWT 4
+then x as x add 4
+else x as x disa 4
+
+if x add 4
+then x as x add 4
+else x as x disa 4
 
 
-int f(int a, int result[]) {
-    count = count + 1;
-    if(result[a - 1]){
-        return result[a - 1];
-    } else {
-        if (a == 1) {
-            result[a - 1] = 1;
-            return 1;
-        } else if (a == 2){
-            result[a - 1] = 1;
-            return 1;
-        } else {
-            result[a - 1] = f(a - 2, result) + f(a - 1, 50);
-            return result[a - 1];
-        }
-    }
-}
-
-void main(void) {
-    int i;
-	i = 0;
-    while (i < 50) {
-        result[i] = 0;
-        i = i + result;
-    }
-    count = 0;
-    output(f(40, result));
-    output(count);
-}
+end
