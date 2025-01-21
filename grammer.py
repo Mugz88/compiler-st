@@ -245,6 +245,8 @@ class SemanticAnalyzer:
 
     def visit_if(self, node):
         _, condition, then_branch, else_branch = node
+        if condition[0] != 'binary_op' or condition[1].value not in ['NE', 'EQ', 'LT', 'LE', 'GT', 'GE']:
+            raise SemanticError(f"Condition in 'if' statement must be a relational operation: {condition}")
         self.visit(condition)
         self.visit(then_branch)
         if else_branch:
@@ -252,6 +254,8 @@ class SemanticAnalyzer:
 
     def visit_while(self, node):
         _, condition, body = node
+        if condition[0] != 'binary_op' or condition[1].value not in ['NE', 'EQ', 'LT', 'LE', 'GT', 'GE']:
+            raise SemanticError(f"Condition in 'if' statement must be a relational operation: {condition}")
         self.visit(condition)
         self.visit(body)
 

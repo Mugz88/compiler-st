@@ -1,15 +1,11 @@
 dim x : integer
-dim y : integer
-dim z : integer
-dim i :integer
-x as 5
-y as 10
-z as (x plus y) mult (x min y) div 2
 
-write (z)
+if x min 4
+then x as x plus 3
+else x as x min 3
 
-for i as 0 
-to i LT 10 
-do i as i plus 1
 
 end
+
+
+
